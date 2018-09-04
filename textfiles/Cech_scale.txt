@@ -1,0 +1,8 @@
+The Cech scale agrees with the Rips scale.
+
+Cech scale:
+5.641500e+00
+
+Intersection point of the rescaled disks system:
+4.554714e+00
+5.495360e+00
