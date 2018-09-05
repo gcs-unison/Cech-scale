@@ -394,3 +394,37 @@ bool read_file_improved(std::vector< std::vector<double> >& disk_system,
     return true;
 }
 
+//#############################################################################
+
+bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
+                std::string filename = "textfiles/Cech-Scale.txt")
+{
+
+    std::ofstream file(filename);
+    if(!file.is_open()){
+        std::cout << "Error. Couldn't create file: " << filename << std::endl;
+        return false;
+    }
+
+    //checks check_scale == vietori_rips
+    if(abs(cech_scale - vietori_rips) < 1e-12){
+        file << "The cech scale and vietori rips coincide." << std::endl;
+    }else{
+        file << "The cech scale and vietori rips DO NOT coincide." << std::endl;
+    }
+
+    file << "Cech scale: " << cech_scale << std::endl;
+    file << "The intersection point:" << std::endl;
+
+    file << "(" << intersection[0];
+    for(unsigned i = 1; i < intersection.size(); ++i)
+        file << ", " << intersection[i];
+    file << ")" << std::endl;
+
+    file.close(); //close the input file
+
+    return true;
+}
+
+//#############################################################################
+

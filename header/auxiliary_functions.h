@@ -171,6 +171,28 @@ bool read_file(int& m, int& d, double M[3][3],
 bool read_file_improved(std::vector< std::vector<double> >& disk_system,
                         std::string filename /*= "textfiles/Disk-system.txt"*/);
 
+//#############################################################################
+
+/**
+ * Reads the file and stores the contents in the disk system.
+ * Writes to a file the results of the program.
+ * Writes whether the cech scale is equal to the vietori rips scale and writes
+ * the cech scale of the disk system.
+ * Also outputs the intersection point.
+ *
+ * @param cech_scale The cech scale calculated by the program.
+ * @param vietori_rips The vietori rips calculated by the program.
+ * @param intersection Vector with the coordinates of the intersecion
+ *                     calculated by the program.
+ * @param filename The file's name to output the result to.
+ *                 By default is "textfiles/Cech-Scale.txt"
+ *
+ * @return True if the file could be opened and everything went all right, false otherwise
+ */
+bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
+                std::string filename /*= "textfiles/Cech-Scale.txt"*/);
+
+//#############################################################################
 
 #endif //AUXILIARY_FUNCTIONS_H_
 
