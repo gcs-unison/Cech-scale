@@ -46,42 +46,20 @@ double rho_improved(const std::vector< std::vector<double> >& disk_system,
                     double lambda_val,
                     double tolerance = 1e-12)
 {
-    unsigned number_disks = disk_system.size();
-    unsigned dimentions = disk_system[0].size() - 1;
-    double rho_value = std::numeric_limits<double>::lowest();
-    //substract 2 from the size for the iterations where k==i and k==j
-    std::vector<double> lambdas(number_disks - 2);
-    lambdas.clear(); //set size to 0 but mantain capacity
+    double rho_value = std::numeric_limits<double>::max();
 
-    for(unsigned i = 0; i < number_disks; ++i){
-        for(unsigned j = 0; j < dimentions; ++j){
-            if(i == j)
+    for(std::vector<double> disk1 : disk_system){
+        for(std::vector<double> disk2 : disk_system){
+            if(disk1 == disk2)
                 continue;
 
-            bool update_rho = true;
-
-            for(unsigned k = 0; k < number_disks; ++k){
-                if(k == i || k == j)
+            for(std::vector<double> disk3 : disk_system){
+                if(disk3 == disk1 || disk3 == disk2)
                     continue;
 
-                lambdas.push_back(lambda(disk_system[i],
-                                         disk_system[j],
-                                         disk_system[k],
-                                         lambda_val,
-                                         tolerance));
-
-                if(lambdas.back() <= rho_value){
-                    update_rho = false;
-                    break;
-                }
+                rho_value = std::min(rho_value,
+                                     lambda(disk1, disk2, disk3, lambda_val));
             }
-
-            if(update_rho){
-                //store the smaller lambda calculated in rho_value
-                rho_value = *std::min_element(std::begin(lambdas), std::end(lambdas));
-            }
-
-            lambdas.clear();
         }
     }
 
