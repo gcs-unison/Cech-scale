@@ -15,8 +15,8 @@ bool circle_circle_intersection(double x0, double y0, double r0,
   dy = y1 - y0;
 
   /* Determine the straight-line distance between the centers. */
-  //d = sqrt((dy*dy) + (dx*dx));
-  d = hypot(dx,dy); // Suggested by Keith Briggs
+  d = sqrt((dy*dy) + (dx*dx));
+  //d = hypot(dx,dy); // Suggested by Keith Briggs
 
   /* Check for solvability. */
   if (d > (r0 + r1))

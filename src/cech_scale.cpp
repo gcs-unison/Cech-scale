@@ -1,5 +1,12 @@
+#include "cech_scale.h"
 
-double rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
+
+//temporals
+#include <iterator>
+//temporals
+
+
+bool rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
                        double lambda_val)
 {
     for(std::vector<double> disk1 : disk_system){
@@ -7,19 +14,27 @@ double rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
             if(disk1 == disk2)
                 continue;
 
+            bool nonnegative = true;
             for(std::vector<double> disk3: disk_system){
-                if(lambda(disk1, disk2, disk3, lambda) < 0)
-                    return false;
+                if(disk3 == disk1 || disk3 == disk2)
+                    continue;
+
+                if(lambda(disk1, disk2, disk3, lambda_val) < 0){
+                    nonnegative = false;
+                }
             }
+            if(nonnegative)
+                return true;
 
         }
     }
 
-    return true;
+    return false;
 }
 
+//#############################################################################
 
-bool cech_scale(std::string input_file = "", std::string output_file = "")
+bool cech_scale(std::string input_file /*= ""*/, std::string output_file /*= ""*/)
 {
     //steps for the algorithm
     //read and validate disk system from text file
@@ -32,28 +47,35 @@ bool cech_scale(std::string input_file = "", std::string output_file = "")
     }
 
     //calculate max vietori rips scale of the disk system
-    double number_disks = disk_system.size();
-    double dimentions = disk_system[0].size() - 1;
-    double max_vietori_rips = std::numeric_limits<double>::lowest();
-    for(unsigned i = 0; i < number_disks - 1; ++i){
-        for(unsigned j = i + 1; j < number_disks; ++j){
-            vietori_rips_distance = std::max(vietori_rips_distance,
-                                             vietori_rips(disk_system[i][0],
-                                                          disk_system[i][1],
-                                                          disk_system[i][2],
-                                                          disk_system[j][0],
-                                                          disk_system[j][1],
-                                                          disk_system[j][2]));
-        }
-    }
+    double vietori_rips_system = max_vietori_rips(disk_system);
+    double cech_scale_val = vietori_rips_system;
 
 
     //verify if rho is positive (if the minimum output is positive)
-    if(rho_nonnegative(disk_system, vietori_rips_distance)){
-        write_file(vietori_rips_distance, vietori_rips_distance, 0, 0);
-    }else{
+    if(!rho_nonnegative(disk_system, vietori_rips_system)){
+        unsigned number_disks = disk_system.size();
+        for(unsigned i = 0; i < number_disks - 2; ++i){
+            for(unsigned j = i + 1; j < number_disks - 1; ++j){
+                for(unsigned k = j + 1; k < number_disks; ++k){
 
+                    //calculate vietori rips of d1, d2, d3
+                    double vietori_rips_d123 = max_vietori_rips(std::vector< std::vector<double> >({disk_system[i],
+                                                                                                    disk_system[j],
+                                                                                                    disk_system[k]}));
+
+                    if(sqrt(4.0/3.0)*vietori_rips_d123 >= cech_scale_val){
+                        cech_scale_val = std::max(cech_scale_val, vietori_rips_d123);
+                    }else{
+                        cech_scale_val = std::max(cech_scale_val,
+                                     bisection(disk_system, vietori_rips_d123, sqrt(4.0/3.0)*vietori_rips_d123, 12));
+                    }
+                }
+            }
+        }
     }
+
+    write_file(cech_scale_val, vietori_rips_system, std::vector<double>({0,0}), output_file);
+    std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return true;
     //  if so, then output the vietori rips scale and point of intersection and end

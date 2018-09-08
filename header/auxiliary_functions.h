@@ -12,7 +12,7 @@
 #include <limits> //for std::numeric_limits<double>::lowest
 #include <vector> //for std::vector
 #include <string> //for std::string
-#include <algorithm> //for std::min_element
+#include <algorithm> //for std::min, std::max
 
 #include "circle_circle_intersection.h"
 
@@ -63,17 +63,41 @@ void left_intersecting_point(double x0, double y0, double r0,
                              double& ax, double& ay);
 
 /**
- * Improved rho function. Evaluates the map rho_m(lambda)
+ * Calculates the vietori rips distance of two disks.
+ *
+ * @param x0 x coordinate of disk 1.
+ * @param y0 y coordinate of disk 1.
+ * @param x1 x coordinate of disk 2.
+ * @param y1 y coordinate of disk 2.
+ * @param r0 Radius of disk 1.
+ * @param r1 Radius of disk 2.
+ *
+ * @return The vietori rips distance of the two disks
+ */
+double vietori_rips(double x0, double y0, double r0,
+                    double x1, double y1, double r1);
+
+
+/**
+ * Calculates the maximum vietori rips distance of a system of disks.
+ *
+ * @param disk_system System of disks.
+ *
+ * @return The maximum vietori rips distance between two disks in the system.
+ */
+double max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
+
+/**
+ * rho function. Evaluates the map rho_m(lambda)
  *
  * @param disk_system The system of disk in the space. The last column is the
  *                    radius of the disk and all previous are the coordinates
  *                    in the space.
- * @param lambda Scale to adjust the disk system.
+ * @param lambda_val Scale to adjust the disk system.
  * @return rho
  */
-double rho_improved(const std::vector< std::vector<double> >& disk_system,
-                    double lambda_val,
-                    double tolerance/* = 1e-12*/);
+double rho(const std::vector< std::vector<double> >& disk_system,
+           double lambda_val);
 
 /*
  * Es un escalar. Se calcula para una terna de discos. Por ejemplo, si tienes
@@ -92,8 +116,6 @@ double rho_improved(const std::vector< std::vector<double> >& disk_system,
  * @param disk2 Vector with the positions of disk2 and its radius as last entry.
  * @param disk3 Vector with the positions of disk3 and its radius as last entry.
  * @param lambda_val The radius are scaled by this number.
- * @param tolerance The tolerance to declare that two disks are close enough to be
- *                  the same. Used by the intersection calculating function.
  *
  * @return The distance from the third disk scaled by a number to the left
  * intersection of the disk 1 and 2 scaled by the same number.
@@ -102,18 +124,7 @@ double rho_improved(const std::vector< std::vector<double> >& disk_system,
 double lambda(const std::vector<double>& disk1,
               const std::vector<double>& disk2,
               const std::vector<double>& disk3,
-              double lambda_val,
-              double tolerance /*= 1e-12*/);
-
-/*      Function RHO     */
-// For a definition, see the paper "A numerical approach for the filtered generalized Cech complex".
-
-double rho(double M[3][3], int m, double lambda, double prec);
-
-//#############################################################################
-
-/*      Bisection's numerical method      */
-double bisection(double M[3][3], int m, double a, double b, int dig_prec, double prec);
+              double lambda_val);
 
 //#############################################################################
 
@@ -127,30 +138,12 @@ double bisection(double M[3][3], int m, double a, double b, int dig_prec, double
  * @param a One of two starting points for bisection.
  * @param b One of two starting points for bisection.
  * @param dig_prec Digit precision. Used to calculate the number of iterations.
- * @param prec Precision used to decide whether a solution is good enough.
  *
  * @return Value such as rho(disk_system, value) is as close to zero as the
  *         method could give.
  */
-double bisection_improved(const std::vector< std::vector<double> >& disk_system,
-                          double a, double b,
-                          int dig_prec, double prec);
-//#############################################################################
-
-/**
- * Reads the file and stores the contents in m and d first and the rest in M.
- *
- * @param m Number of disks.
- * @param d Number of dimensions of the disks.
- * @param M Matrix of coordinates of the disks. Each row has the coordinates of the disks.
- * @param N Matrix of coordinates of the disks. Each row has the coordinates of the disks.?????????
- * @param file The file's name. "Disk-system.txt" by default
- * @return True if the file could be opened and everything went all right, false otherwise
- */
-bool read_file(int& m, int& d, double M[3][3],
-              std::vector<std::vector<double>>& N,
-              std::string filename /*= "textfiles/Disk-system.txt"*/);
-
+double bisection(const std::vector< std::vector<double> >& disk_system,
+                 double a, double b, int dig_prec);
 
 //#############################################################################
 
@@ -168,8 +161,8 @@ bool read_file(int& m, int& d, double M[3][3],
  *
  * @return True if the file could be opened and everything went all right, false otherwise
  */
-bool read_file_improved(std::vector< std::vector<double> >& disk_system,
-                        std::string filename /*= "textfiles/Disk-system.txt"*/);
+bool read_file(std::vector< std::vector<double> >& disk_system,
+                        std::string filename = "textfiles/Disks-system.txt");
 
 //#############################################################################
 
@@ -190,7 +183,7 @@ bool read_file_improved(std::vector< std::vector<double> >& disk_system,
  * @return True if the file could be opened and everything went all right, false otherwise
  */
 bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
-                std::string filename /*= "textfiles/Cech-Scale.txt"*/);
+                std::string filename = "textfiles/Cech-Scale.txt");
 
 //#############################################################################
 

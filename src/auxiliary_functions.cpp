@@ -42,24 +42,32 @@ void left_intersecting_point(double x0, double y0, double r0,
 
 //############################################################################
 
-double rho_improved(const std::vector< std::vector<double> >& disk_system,
-                    double lambda_val,
-                    double tolerance = 1e-12)
+double rho(const std::vector< std::vector<double> >& disk_system,
+                    double lambda_val)
 {
-    double rho_value = std::numeric_limits<double>::max();
+    double rho_value = std::numeric_limits<double>::lowest();
 
     for(std::vector<double> disk1 : disk_system){
         for(std::vector<double> disk2 : disk_system){
             if(disk1 == disk2)
                 continue;
 
+            double rho_max = true;
+            double min_rho = std::numeric_limits<double>::max();
             for(std::vector<double> disk3 : disk_system){
                 if(disk3 == disk1 || disk3 == disk2)
                     continue;
 
-                rho_value = std::min(rho_value,
-                                     lambda(disk1, disk2, disk3, lambda_val));
+                double lambda_k = lambda(disk1, disk2, disk3, lambda_val);
+                min_rho = std::min(min_rho, lambda_k);
+                if(lambda_k <= rho_value){
+                    rho_max = false;
+                    break;
+                }
             }
+
+            if(rho_max)
+                rho_value = min_rho;
         }
     }
 
@@ -71,8 +79,7 @@ double rho_improved(const std::vector< std::vector<double> >& disk_system,
 double lambda(const std::vector<double>& disk1,
               const std::vector<double>& disk2,
               const std::vector<double>& disk3,
-              double lambda_val,
-              double tolerance = 1e-12)
+              double lambda_val)
 {
     double x_intersect;
     double y_intersect;
@@ -90,211 +97,21 @@ double lambda(const std::vector<double>& disk1,
     return scaled_radious3 - intersect_distance_to_disk3;
 }
 
-//############################################################################
-
-double rho(double M[3][3], int m, double lambda, double prec){
-    // M is 2-disks system.
-    // m is the number is disks in M. In our script we will fix m=3.
-    // lambda is the scale at which the function rho_M is evaluated.
-    int j, D, k, k_index;
-    int rho_ij_is_higher, rho_ji_is_higher, double_intersection;
-    int k_values[m-2];
-
-    double rho_value = std::numeric_limits<double>::lowest();
-    double i_radious_reescaled, j_radious_reescaled, dist_ij, r_ij, a, b;
-    double sum, distdkcenter; //auxiliar variables
-    double i_center[2], j_center[2];
-    double c_ij[2];
-    double d_ij[2], d_ji[2];
-    double k_center[2];
-    double n_ij[2];
-    double rho_ijk[m-2], rho_jik[m-2];
-
-    for(int i=0;i<m-1;i++){
-        for(j=i+1;j<m;j++){
-            // Calculate the intersection points d_ij:
-            for(D=0; D < 2; D++)
-                i_center[D]=M[i][D];
-
-            //should this line be inside for??
-            i_radious_reescaled = lambda*M[i][2];
-            for(D=0; D < 2; D++)
-                j_center[D]=M[j][D];
-
-            //should this line be inside for??
-            j_radious_reescaled = lambda*M[j][2];
-
-            for(D=0; D < 2; D++)
-                c_ij[D]=j_center[D]-i_center[D];
-            sum=0;
-            for(D=0; D < 2; D++){
-                sum+=pow(i_center[D]-j_center[D],2);
-            }
-            dist_ij=sqrt(sum);
-            double_intersection=0;
-
-            // Radii close enough, are equal_
-            if(fabs(i_radious_reescaled-j_radious_reescaled) <= prec){
-                j_radious_reescaled = i_radious_reescaled;
-            }
-
-            // Concentric disks
-            if(dist_ij <= prec){
-                for(D=0; D < 2; D++)
-                    d_ij[D] = i_center[D];
-            }else{
-                // External tangency
-                if(fabs(dist_ij - (i_radious_reescaled+j_radious_reescaled)) < prec){
-                    for(D=0; D < 2; D++){
-                        double dividend = (j_radious_reescaled*i_center[D] + i_radious_reescaled*j_center[D]);
-                        double divisor = (i_radious_reescaled+j_radious_reescaled);
-                        d_ij[D] = dividend / divisor;
-                    }
-                }else{
-                    // Complete contention
-                    if((dist_ij > prec) && ( dist_ij <= fabs(i_radious_reescaled-j_radious_reescaled)+prec)){
-                        r_ij = fabs(i_radious_reescaled-j_radious_reescaled);
-                        if(j_radious_reescaled > i_radious_reescaled){
-                            for(D=0; D < 2; D++)
-                                i_center[D] = j_center[D];
-
-                            i_radious_reescaled = j_radious_reescaled;
-
-                            for(D=0; D < 2; D++)
-                                c_ij[D] = -c_ij[D];
-                        }
-                        for(D=0; D < 2; D++)
-                            d_ij[D] = i_center[D] + i_radious_reescaled*c_ij[D]/r_ij;
-                    }else{
-                        // Two intersection points
-                        n_ij[0]=-c_ij[1]; n_ij[1]=c_ij[0];
-
-                        // Calculate the coefficients a and b such that
-                        // d_ij = i_center + a * c_ij + b * n_ij and d_ji = i_center + a * c_ij - b * n_ij
-                        a = 0.5*(1 + (i_radious_reescaled-j_radious_reescaled)*(i_radious_reescaled+j_radious_reescaled)/pow(dist_ij,2));
-                        b = sqrt(pow(i_radious_reescaled,2) - pow(a*dist_ij,2))/dist_ij;
-                        for(D=0; D < 2; D++)
-                            d_ij[D] = i_center[D] + a * c_ij[D] + b * n_ij[D];
-                        for(D=0; D < 2; D++)
-                            d_ji[D] = i_center[D] + a * c_ij[D] - b * n_ij[D];
-                        double_intersection = 1;
-                    }
-                }
-            }
-
-            // Take k such that k != i,j.
-            int count = 0;
-            for(D=0; D<m; D++)
-                if(D!=i && D!=j)
-                    k_values[count++] = D;
-
-            rho_ij_is_higher = 1;
-            k_index = 0;
-            while(rho_ij_is_higher==1 && k_index != m-2){
-                k = k_values[k_index];
-                for(D=0; D < 2; D++)
-                    k_center[D]=M[k][D];
-
-                distdkcenter=0;
-                for(D=0; D < 2; D++){
-                    distdkcenter+=pow(d_ij[D]-k_center[D],2);
-                }
-                distdkcenter=sqrt(distdkcenter);
-                rho_ijk[k_index] = lambda*M[k][2]-distdkcenter;
-
-                if(rho_ijk[k_index] < rho_value){
-                    rho_ij_is_higher = 0;
-                }
-                k_index++;
-            }
-
-            if(rho_ij_is_higher==1){
-                rho_value=rho_ijk[0];
-                for(D=1;D<m-2;D++)
-                    if(rho_ijk[D]<rho_value)
-                        rho_value=rho_ijk[D];
-            }
-
-            if(double_intersection==1){
-                k_index = 0;
-                rho_ji_is_higher = 1;
-
-                while(rho_ji_is_higher==1 && k_index != m-2){
-                    k = k_values[k_index];
-                    for(D=0; D < 2; D++)
-                        k_center[D]=M[k][D];
-
-                    distdkcenter=0;
-                    for(D=0; D < 2; D++){
-                        distdkcenter+=pow(d_ji[D]-k_center[D],2);
-                    }
-                    distdkcenter=sqrt(distdkcenter);
-                    rho_jik[k_index] = lambda*M[k][2]-distdkcenter;
-
-                    if(rho_jik[k_index] < rho_value){
-                        rho_ji_is_higher = 0;
-                    }
-                    k_index++;
-                }
-
-                if(rho_ji_is_higher==1){
-                    rho_value=rho_jik[0];
-                    for(D=1;D<m-2;D++)
-                        if(rho_jik[D]<rho_value)
-                            rho_value=rho_jik[D];
-                }
-            }
-        }
-    }
-    return rho_value;
-}
-
 //#############################################################################
 
-double bisection(double M[3][3], int m, double a, double b, int dig_prec, double prec){
-    // dig_prec = number of digits of precision.
-    double mp;
-    double rho_M_mp;
-    double rho_M_a;
-    double rho_M_b;
-    int n;
-    int num_iter;
-
-    rho_M_a = rho(M, m, a, prec);
-    rho_M_b = rho(M, m, b, prec);
-    num_iter = ceil((log10(a*(sqrt(4.0/3)-1)) + dig_prec)/log10(2));
-    for(n=1; n <= num_iter; n++){
-        mp = 0.5*(a + b);
-        rho_M_mp = rho(M, m, mp, prec);
-
-        if(fabs(rho_M_mp) <= prec){
-            break;
-        }else{
-            if(rho_M_mp * rho_M_b < 0){
-                a = mp;
-            }else{
-                b = mp;
-                rho_M_b = rho_M_mp;
-            }
-        }
-    }
-    return mp;
-}
-
-//#############################################################################
-
-double bisection_improved(const std::vector< std::vector<double> >& disk_system,
+double bisection(const std::vector< std::vector<double> >& disk_system,
                           double a, double b,
-                          int dig_prec, double prec){
+                          int dig_prec){
     double mp = 0;
-    double rho_b = rho_improved(disk_system, b, prec);
+    double rho_b = rho(disk_system, b);
+    double TOLERANCE = 1e-12;
 
     int num_iter = ceil((log10(a*(sqrt(4.0/3.0)-1)) + dig_prec)/log10(2.0));
     for(int n=1; n <= num_iter; n++){
         mp = 0.5*(a + b);
-        double rho_mp = rho_improved(disk_system, mp, prec);
+        double rho_mp = rho(disk_system, mp);
 
-        if(fabs(rho_mp) <= prec){
+        if(fabs(rho_mp) <= TOLERANCE){
             break;
         }else{
             if(rho_mp * rho_b < 0){
@@ -311,41 +128,37 @@ double bisection_improved(const std::vector< std::vector<double> >& disk_system,
 
 //#############################################################################
 
-bool read_file(int& m, int& d, double M[3][3],
-              std::vector<std::vector<double>>& N,
-              std::string filename = "textfiles/Disk-system.txt")
+double vietori_rips(double x0, double y0, double r0,
+                    double x1, double y1, double r1)
 {
-
-    std::ifstream file(filename);
-    if(!file.is_open()){
-        std::cout << "Error. Couldn't find file with path: " << filename << std::endl;
-        return false;
-    }
-
-    file >> m;
-    file >> d;
-
-    //initialize N's size knowing d
-    N = std::vector< std::vector<double> >(3, std::vector<double>(d+1));
-
-    if(d==2)
-        for(int i=0;i<m;i++)
-            for(int j=0;j<3;j++)
-                file >> M[i][j];
-    else if(m==3)
-        for(int i=0; i<3; i++)
-            for(int j=0; j<d+1; j++)
-                file >> N[i][j];
-
-    file.close(); //close the input file
-
-    return true;
+    return vectorial_distance(x0, y0, x1, y1) / (r0 + r1);
 }
 
 //#############################################################################
 
-bool read_file_improved(std::vector< std::vector<double> >& disk_system,
-                        std::string filename = "textfiles/Disk-system.txt")
+double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
+{
+    double number_disks = disk_system.size();
+    double vietori_rips_distance = std::numeric_limits<double>::lowest();
+    for(unsigned i = 0; i < number_disks - 1; ++i){
+        for(unsigned j = i + 1; j < number_disks; ++j){
+            vietori_rips_distance = std::max(vietori_rips_distance,
+                                             vietori_rips(disk_system[i][0],
+                                                          disk_system[i][1],
+                                                          disk_system[i][2],
+                                                          disk_system[j][0],
+                                                          disk_system[j][1],
+                                                          disk_system[j][2]));
+        }
+    }
+
+    return vietori_rips_distance;
+}
+
+//#############################################################################
+
+bool read_file(std::vector< std::vector<double> >& disk_system,
+                        std::string filename /*= "textfiles/Disks-system.txt"*/)
 {
 
     std::ifstream file(filename);
@@ -358,6 +171,12 @@ bool read_file_improved(std::vector< std::vector<double> >& disk_system,
     int dimentions;
     file >> number_disks;
     file >> dimentions;
+
+    if(number_disks <= 0 || dimentions <= 0 ||
+       (dimentions > 2 && number_disks > 3)){
+        file.close();
+        return false;
+    }
 
     //initialize N's size knowing d
     disk_system = std::vector< std::vector<double> >(number_disks,
@@ -375,8 +194,9 @@ bool read_file_improved(std::vector< std::vector<double> >& disk_system,
 //#############################################################################
 
 bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
-                std::string filename = "textfiles/Cech-Scale.txt")
+                std::string filename /*= "textfiles/Cech-Scale.txt"*/)
 {
+    const double TOLERANCE = 1e-12;
 
     std::ofstream file(filename);
     if(!file.is_open()){
@@ -385,7 +205,7 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
     }
 
     //checks check_scale == vietori_rips
-    if(abs(cech_scale - vietori_rips) < 1e-12){
+    if(abs(cech_scale - vietori_rips) < TOLERANCE){
         file << "The cech scale and vietori rips coincide." << std::endl;
     }else{
         file << "The cech scale and vietori rips DO NOT coincide." << std::endl;
