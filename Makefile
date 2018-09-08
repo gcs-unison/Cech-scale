@@ -6,17 +6,17 @@ CXXFLAGS = -std=c++14 -O2 -Wall -I$(IDIR)
 DEBUGFLAGS = -std=c++14 -g -Wall -I$(IDIR)
 
 ODIR = obj
-SDIR = src
+SDIR = .
 OUTDIR = .
 DEBUGODIR = obj/Debug
 DEBUGDIR = .
 
-GENMOD = circle_circle_intersection auxiliary_functions cech_scale
+GENMOD =
 
 _DEPS =
 DEPS = $(patsubst %, $(IDIR)/%.h, $(_DEPS) $(GENMOD))
 
-_OBJ = main
+_OBJ = WEB-Cech.scale
 OBJ = $(patsubst %, $(ODIR)/%.o, $(_OBJ) $(GENMOD))
 
 DEBUGOBJ = $(patsubst %, $(DEBUGODIR)/%.o, $(_OBJ) $(GENMOD))
