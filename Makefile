@@ -9,9 +9,9 @@ ODIR = obj
 SDIR = src
 OUTDIR = .
 DEBUGODIR = obj/Debug
-DEBUGDIR = bin/Debug
+DEBUGDIR = .
 
-GENMOD = circle_circle_intersection auxiliary_functions
+GENMOD = circle_circle_intersection auxiliary_functions cech_scale
 
 _DEPS =
 DEPS = $(patsubst %, $(IDIR)/%.h, $(_DEPS) $(GENMOD))
@@ -30,7 +30,7 @@ $(OUTDIR)/ayudantia.exe: $(OBJ)
 $(DEBUGODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(DEBUGFLAGS)
 
-$(DEBUGDIR)/AyudantiaDebug: $(DEBUGOBJ)
+$(DEBUGDIR)/debug: $(DEBUGOBJ)
 	$(CXX) -o $@ $^ $(DEBUGFLAGS)
 
 .PHONY: clean
