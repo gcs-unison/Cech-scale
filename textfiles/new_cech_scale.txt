@@ -1,0 +1,4 @@
+The cech scale and vietori rips coincide.
+Cech scale: 5.6415
+The intersection point:
+(4.55471, 5.49536)

@@ -12,13 +12,13 @@
 int main(int argc, char *argv[])
 {
     std::string input_file = "textfiles/Disks-system.txt";
-    std::string output_file = "textfiles/Cech_scale.txt";
+    std::string output_file = "textfiles/new_cech_scale.txt";
     if(argc >= 2)
         input_file = std::string(argv[1]);
     if(argc >= 3)
         output_file = std::string(argv[2]);
 
-    cech_scale(input_file, output_file);
+    calculate_cech_scale(input_file, output_file);
 
     return 0;
 }

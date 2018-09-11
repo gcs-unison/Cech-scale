@@ -40,6 +40,15 @@ void left_intersecting_point(double x0, double y0, double r0,
     }
 }
 
+void left_intersecting_point(const std::vector<double>& disk1,
+                             const std::vector<double>& disk2,
+                             double& ax, double& ay)
+{
+    left_intersecting_point(disk1[0], disk1[1], disk1[2],
+                            disk2[0], disk2[1], disk2[2],
+                            ax, ay);
+}
+
 //############################################################################
 
 double rho(const std::vector< std::vector<double> >& disk_system,
@@ -100,8 +109,8 @@ double lambda(const std::vector<double>& disk1,
 //#############################################################################
 
 double bisection(const std::vector< std::vector<double> >& disk_system,
-                          double a, double b,
-                          int dig_prec){
+                 double a, double b,
+                 int dig_prec){
     double mp = 0;
     double rho_b = rho(disk_system, b);
     double TOLERANCE = 1e-12;
@@ -111,7 +120,7 @@ double bisection(const std::vector< std::vector<double> >& disk_system,
         mp = 0.5*(a + b);
         double rho_mp = rho(disk_system, mp);
 
-        if(fabs(rho_mp) <= TOLERANCE){
+        if(std::abs(rho_mp) <= TOLERANCE){
             break;
         }else{
             if(rho_mp * rho_b < 0){
@@ -134,25 +143,45 @@ double vietori_rips(double x0, double y0, double r0,
     return vectorial_distance(x0, y0, x1, y1) / (r0 + r1);
 }
 
+double vietori_rips(const std::vector<double>& disk1,
+                    const std::vector<double>& disk2)
+{
+    return vietori_rips(disk1[0], disk1[1], disk1[2],
+                        disk2[0], disk2[1], disk2[2]);
+}
+
 //#############################################################################
 
-double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
+VietoriRipsScale max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
     double vietori_rips_scale = std::numeric_limits<double>::lowest();
+    unsigned d1_idx = 0;
+    unsigned d2_idx = 1;
     for(unsigned i = 0; i < number_disks - 1; ++i){
         for(unsigned j = i + 1; j < number_disks; ++j){
-            vietori_rips_scale = std::max(vietori_rips_scale,
-                                             vietori_rips(disk_system[i][0],
-                                                          disk_system[i][1],
-                                                          disk_system[i][2],
-                                                          disk_system[j][0],
-                                                          disk_system[j][1],
-                                                          disk_system[j][2]));
+
+
+            double vietori_rips_scale_ij = vietori_rips(disk_system[i],
+                                                        disk_system[j]);
+
+            if(vietori_rips_scale_ij > vietori_rips_scale){
+                vietori_rips_scale = vietori_rips_scale_ij;
+                d1_idx = i;
+                d2_idx = j;
+            }
         }
     }
 
-    return vietori_rips_scale;
+    double intersection_x;
+    double intersection_y;
+    const std::vector<double>& disk1 = disk_system[d1_idx];
+    const std::vector<double>& disk2 = disk_system[d2_idx];
+    left_intersecting_point(disk1[0], disk1[1], disk1[2]*vietori_rips_scale,
+                            disk2[0], disk2[1], disk2[2]*vietori_rips_scale,
+                            intersection_x, intersection_y);
+
+    return VietoriRipsScale(vietori_rips_scale, intersection_x, intersection_y);
 }
 
 //#############################################################################
@@ -233,7 +262,7 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
     }
 
     //checks check_scale == vietori_rips
-    if(abs(cech_scale - vietori_rips) < TOLERANCE){
+    if(std::abs(cech_scale - vietori_rips) < TOLERANCE){
         file << "The cech scale and vietori rips coincide." << std::endl;
     }else{
         file << "The cech scale and vietori rips DO NOT coincide." << std::endl;
