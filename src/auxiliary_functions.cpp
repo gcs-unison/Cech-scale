@@ -3,7 +3,7 @@
 //############################################################################
 double vectorial_distance(double x0, double y0, double x1, double y1)
 {
-    return sqrt( pow(x0-x1, 2.0) + pow(y0-y1, 2.0) );
+    return std::sqrt( std::pow(x0-x1, 2.0) + std::pow(y0-y1, 2.0) );
 }
 
 //############################################################################
@@ -139,10 +139,10 @@ double vietori_rips(double x0, double y0, double r0,
 double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
-    double vietori_rips_distance = std::numeric_limits<double>::lowest();
+    double vietori_rips_scale = std::numeric_limits<double>::lowest();
     for(unsigned i = 0; i < number_disks - 1; ++i){
         for(unsigned j = i + 1; j < number_disks; ++j){
-            vietori_rips_distance = std::max(vietori_rips_distance,
+            vietori_rips_scale = std::max(vietori_rips_scale,
                                              vietori_rips(disk_system[i][0],
                                                           disk_system[i][1],
                                                           disk_system[i][2],
@@ -152,7 +152,35 @@ double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
         }
     }
 
-    return vietori_rips_distance;
+    return vietori_rips_scale;
+}
+
+//#############################################################################
+
+bool rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
+                       double lambda_val)
+{
+    for(std::vector<double> disk1 : disk_system){
+        for(std::vector<double> disk2 : disk_system){
+            if(disk1 == disk2)
+                continue;
+
+            bool nonnegative = true;
+            for(std::vector<double> disk3: disk_system){
+                if(disk3 == disk1 || disk3 == disk2)
+                    continue;
+
+                if(lambda(disk1, disk2, disk3, lambda_val) < 0){
+                    nonnegative = false;
+                    break;
+                }
+            }
+            if(nonnegative)
+                return true;
+        }
+    }
+
+    return false;
 }
 
 //#############################################################################

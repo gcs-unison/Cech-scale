@@ -1,14 +1,9 @@
 #ifndef AUXILIARY_FUNCTIONS_H_
 #define AUXILIARY_FUNCTIONS_H_
 
-#include <stdlib.h>
-#include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <ctime>
-#include <math.h>
-#include <fstream>
-#include <cstring>
+#include <cmath> //for std::sqrt, std::pow
+#include <iostream> //for std::cout, std::endl
+#include <fstream> // for std::ofstream, std::ifstream
 #include <limits> //for std::numeric_limits<double>::lowest
 #include <vector> //for std::vector
 #include <string> //for std::string
@@ -144,6 +139,20 @@ double lambda(const std::vector<double>& disk1,
  */
 double bisection(const std::vector< std::vector<double> >& disk_system,
                  double a, double b, int dig_prec);
+
+//#############################################################################
+
+/**
+ * Checks whether for all disks in the disk system and the lambda value
+ * specified, the rho function always returns a positive number or not.
+ * @param disk_system System of disks in R^n.
+ * @param lambda_val Value needed to evaluate rho.
+ *
+ * @return True if for all disks in the disk system, evaluating rho using
+ *          the lambda value return a non negative number. False otherwise.
+ */
+bool rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
+                       double lambda_val);
 
 //#############################################################################
 
