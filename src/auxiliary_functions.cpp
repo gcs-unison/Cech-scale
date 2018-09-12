@@ -17,9 +17,8 @@ bool is_left(double x0, double y0,
 
 //############################################################################
 
-void left_intersecting_point(double x0, double y0, double r0,
-                             double x1, double y1, double r1,
-                             double& ax, double& ay)
+Point left_intersecting_point(double x0, double y0, double r0,
+                              double x1, double y1, double r1)
 {
     double x_intersect1;
     double y_intersect1;
@@ -32,21 +31,18 @@ void left_intersecting_point(double x0, double y0, double r0,
                                x_intersect2, y_intersect2);
 
     if(is_left(x0, y0, x1, y1, x_intersect1, y_intersect1)){
-        ax = x_intersect1;
-        ay = y_intersect1;
+        return Point(x_intersect1, y_intersect1);
     }else{
-        ax = x_intersect2;
-        ay = y_intersect2;
+        return Point(x_intersect2, y_intersect2);
     }
 }
 
-void left_intersecting_point(const std::vector<double>& disk1,
-                             const std::vector<double>& disk2,
-                             double& ax, double& ay)
+Point left_intersection_scaled(const std::vector<double>& disk1,
+                               const std::vector<double>& disk2,
+                               double scale)
 {
-    left_intersecting_point(disk1[0], disk1[1], disk1[2],
-                            disk2[0], disk2[1], disk2[2],
-                            ax, ay);
+    return left_intersecting_point(disk1[0], disk1[1], disk1[2]*scale,
+                                   disk2[0], disk2[1], disk2[2]*scale);
 }
 
 //############################################################################
@@ -90,20 +86,14 @@ double lambda(const std::vector<double>& disk1,
               const std::vector<double>& disk3,
               double lambda_val)
 {
-    double x_intersect;
-    double y_intersect;
-    double scaled_radious1 = disk1.back()*lambda_val;
-    double scaled_radious2 = disk2.back()*lambda_val;
-    double scaled_radious3 = disk3.back()*lambda_val;
+    Point intersection = left_intersection_scaled(disk1, disk2, lambda_val);
 
-    left_intersecting_point(disk1[0], disk1[1], scaled_radious1,
-                            disk2[0], disk2[1], scaled_radious2,
-                            x_intersect, y_intersect);
+    double intersect_distance_to_disk3 = vectorial_distance(intersection.x,
+                                                            intersection.y,
+                                                            disk3[0],
+                                                            disk3[1]);
 
-    double intersect_distance_to_disk3 = vectorial_distance(x_intersect, y_intersect,
-                                                            disk3[0], disk3[1]);
-
-    return scaled_radious3 - intersect_distance_to_disk3;
+    return disk3[2]*lambda_val - intersect_distance_to_disk3;
 }
 
 //#############################################################################
@@ -152,7 +142,18 @@ double vietori_rips(const std::vector<double>& disk1,
 
 //#############################################################################
 
-VietoriRipsScale max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
+double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
+{
+    double vietori_rips_scale = std::numeric_limits<double>::lowest();
+    for(std::vector<double> disk1 : disk_system)
+        for(std::vector<double> disk2 : disk_system)
+            vietori_rips_scale = std::max(vietori_rips_scale,
+                                          vietori_rips(disk1, disk2));
+
+    return vietori_rips_scale;
+}
+
+std::tuple<double, Point> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
     double vietori_rips_scale = std::numeric_limits<double>::lowest();
@@ -173,15 +174,11 @@ VietoriRipsScale max_vietori_rips(const std::vector< std::vector<double> >& disk
         }
     }
 
-    double intersection_x;
-    double intersection_y;
-    const std::vector<double>& disk1 = disk_system[d1_idx];
-    const std::vector<double>& disk2 = disk_system[d2_idx];
-    left_intersecting_point(disk1[0], disk1[1], disk1[2]*vietori_rips_scale,
-                            disk2[0], disk2[1], disk2[2]*vietori_rips_scale,
-                            intersection_x, intersection_y);
+    Point intersection = left_intersection_scaled(disk_system[d1_idx],
+                                                  disk_system[d2_idx],
+                                                  vietori_rips_scale);
 
-    return VietoriRipsScale(vietori_rips_scale, intersection_x, intersection_y);
+    return std::make_tuple(vietori_rips_scale, intersection);
 }
 
 //#############################################################################

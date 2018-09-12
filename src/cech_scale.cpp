@@ -11,37 +11,55 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
         return false;
     }
 
+    double vietori_rips_system;
+    Point intersection;
     //calculate max vietori rips scale of the disk system
-    VietoriRipsScale vietori_rips_system = max_vietori_rips(disk_system);
-    CechScale cech_scale = vietori_rips_system;
+    std::tie(vietori_rips_system, intersection) = max_vietori_rips_intersection(disk_system);
+    double cech_scale = vietori_rips_system;
 
     //verify if rho is nonnegative
-    if(!rho_nonnegative(disk_system, cech_scale.value)){
+    if(!rho_nonnegative(disk_system, cech_scale)){
+
+        unsigned d1_idx = 0;
+        unsigned d2_idx = 1;
+        unsigned d3_idx = 2;
         unsigned number_disks = disk_system.size();
         for(unsigned i = 0; i < number_disks - 2; ++i){
             for(unsigned j = i + 1; j < number_disks - 1; ++j){
                 for(unsigned k = j + 1; k < number_disks; ++k){
 
                     //calculate vietori rips of disk1, disk2, disk3
-                    VietoriRipsScale vietori_rips_d123 = max_vietori_rips({disk_system[i],
-                                                                           disk_system[j],
-                                                                           disk_system[k]});
+                    double vietori_rips_d123 = max_vietori_rips({disk_system[i],
+                                                                 disk_system[j],
+                                                                 disk_system[k]});
 
-                    if(sqrt(4.0/3.0)*vietori_rips_d123.value >= cech_scale.value){
-                        if(vietori_rips_d123.value > cech_scale.value)
+                    if(sqrt(4.0/3.0)*vietori_rips_d123 >= cech_scale){
+                        if(vietori_rips_d123 > cech_scale){
                             cech_scale = vietori_rips_d123;
+                            d1_idx = i;
+                            d2_idx = j;
+                            d3_idx = k;
+                        }
+
 
                     }else{
-                        cech_scale.value = std::max(cech_scale.value,
-                                        bisection(disk_system, vietori_rips_d123.value, sqrt(4.0/3.0)*vietori_rips_d123.value, 12));
+                        double cech_bisection = bisection(disk_system, vietori_rips_d123, sqrt(4.0/3.0)*vietori_rips_d123, 12);
+                        if(cech_bisection > cech_scale){
+                            cech_scale = cech_bisection;
+                            d1_idx = i;
+                            d2_idx = j;
+                            d3_idx = k;
+                        }
                     }
                 }
             }
         }
+
+        intersection = left_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
     }
 
-    write_file(cech_scale.value, vietori_rips_system.value,
-               {cech_scale.x, cech_scale.y},
+    write_file(cech_scale, vietori_rips_system,
+               {intersection.x, intersection.y},
                output_file);
     std::cout << "Wrote results to file: " << output_file << std::endl;
 

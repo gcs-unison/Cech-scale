@@ -1,6 +1,7 @@
 #ifndef AUXILIARY_FUNCTIONS_H_
 #define AUXILIARY_FUNCTIONS_H_
 
+#include <tuple> //for std::tuple
 #include <cmath> //for std::sqrt, std::pow
 #include <iostream> //for std::cout, std::endl
 #include <fstream> // for std::ofstream, std::ifstream
@@ -9,15 +10,8 @@
 #include <string> //for std::string
 #include <algorithm> //for std::min, std::max
 
+#include "point.h"
 #include "circle_circle_intersection.h"
-
-struct VietoriRipsScale{
-    double value;
-    double x;
-    double y;
-
-    VietoriRipsScale(double value, double x, double y): value(value), x(x), y(y) {}
-};
 
 /**
  * Calculates the euclidean distance between the points (x0, y0) (x1, y1)
@@ -57,13 +51,11 @@ bool is_left(double x0, double y0,
  * @param y0 y coordinate of disk 1.
  * @param x1 x coordinate of disk 2.
  * @param y1 y coordinate of disk 2.
- * @param ax Reference where the x coordinate of left intersection will be stored.
- * @param ay Reference where the y coordinate of left intersection will be stored.
  *
+ * @return The left intersection point of the two disks.
  */
-void left_intersecting_point(double x0, double y0, double r0,
-                             double x1, double y1, double r1,
-                             double& ax, double& ay);
+Point left_intersecting_point(double x0, double y0, double r0,
+                              double x1, double y1, double r1);
 
 /**
  * Calculates the intersecting points of the 2d disks
@@ -75,13 +67,13 @@ void left_intersecting_point(double x0, double y0, double r0,
  *              center and r1 is its radius.
  * @param disk2 Vector with form (x2, y2, r2). x2,y2 are the coordinates of the
  *              center and r2 is its radius.
- * @param ax Reference where the x coordinate of left intersection will be stored.
- * @param ay Reference where the y coordinate of left intersection will be stored.
  *
+ * @return The left intersection point of the two disks.
  */
-void left_intersecting_point(const std::vector<double>& disk1,
-                             const std::vector<double>& disk2,
-                             double& ax, double& ay);
+Point left_intersection_scaled(const std::vector<double>& disk1,
+                               const std::vector<double>& disk2,
+                               double scale);
+
 
 /**
  * Calculates the vietori rips distance of two disks.
@@ -111,6 +103,14 @@ double vietori_rips(double x0, double y0, double r0,
 double vietori_rips(const std::vector<double>& disk1,
                     const std::vector<double>& disk2);
 
+/**
+ * Calculates the maximum vietori rips distance of a system of disks.
+ *
+ * @param disk_system System of disks.
+ *
+ * @return The maximum vietori rips distance between two disks in the system.
+ */
+double max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
 
 /**
  * Calculates the maximum vietori rips distance of a system of disks.
@@ -120,7 +120,7 @@ double vietori_rips(const std::vector<double>& disk1,
  * @return The maximum vietori rips distance between two disks in the system
  *          and the intersection of the disks with this distance.
  */
-VietoriRipsScale max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
+std::tuple<double, Point> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
 
 /**
  * rho function. Evaluates the map rho_m(lambda)

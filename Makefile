@@ -13,7 +13,7 @@ DEBUGDIR = .
 
 GENMOD = circle_circle_intersection auxiliary_functions cech_scale
 
-_DEPS =
+_DEPS = point
 DEPS = $(patsubst %, $(IDIR)/%.h, $(_DEPS) $(GENMOD))
 
 _OBJ = main
