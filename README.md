@@ -33,11 +33,12 @@ You can also specify others files to read from and write to by calling the progr
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 
-* The code corresponds to the algororithm Cech Scale, which was established in the paper "A numerical approach for the filtered generalized Cech complex",
-* by Jesus F. Espinoza, Rosalia Hernandez-Amador, Hector Alfredo Hernandez Hernandez and Beatriz Ramonetti Valencia.
+* The code corresponds to the algororithm Cech Scale, which was established in
+the paper "A numerical approach for the filtered generalized Cech complex",
+by Jesus F. Espinoza, Rosalia Hernandez-Amador, Hector Alfredo Hernandez
+Hernandez and Beatriz Ramonetti Valencia.
 
