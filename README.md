@@ -2,10 +2,6 @@
 
 This program calculates the cech scale of a system of n disk in 2D. It can also calculate the cech scale for systems of greater dimentions but the system must not have more than 3 disks.
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
 You only need a C++ compiler compatible with C++11 standard or above. Also makefile is recommended to easily compile the program.
