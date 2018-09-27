@@ -29,7 +29,7 @@ You can also specify others files to read from and write to by calling the progr
 
 ## License
 
-This project is licensed under the GNU General Public License v3.0 - see the [LICENSE.md](LICENSE.md) file for details
+This project is licensed under the GNU General Public License v3.0 - see the [LICENSE](LICENSE) file for details
 
 ## Acknowledgments
 
@@ -37,4 +37,5 @@ This project is licensed under the GNU General Public License v3.0 - see the [LI
 the paper "A numerical approach for the filtered generalized Cech complex",
 by Jesus F. Espinoza, Rosalia Hernandez-Amador, Hector Alfredo Hernandez
 Hernandez and Beatriz Ramonetti Valencia.
+* Tim Voght's C implementation of the intersection of two circles.
 
