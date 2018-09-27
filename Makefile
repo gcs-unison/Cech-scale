@@ -24,7 +24,7 @@ DEBUGOBJ = $(patsubst %, $(DEBUGODIR)/%.o, $(_OBJ) $(GENMOD))
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(LDFLAGS)
 
-$(OUTDIR)/ayudantia.exe: $(OBJ)
+$(OUTDIR)/cech.exe: $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 $(DEBUGODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
