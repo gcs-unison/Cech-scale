@@ -6,13 +6,23 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
 {
     //read and validate disk system from text file
     std::cout << "Reading from file: " << input_file << std::endl;
-    std::vector< std::vector<double> > disk_system;
-    if(!read_file(disk_system, input_file)){
+    std::vector< std::vector<double> > read_system;
+    if(!read_file(read_system, input_file)){
         return false;
+    }
+    int dimentions = read_system[0].size() - 1;
+
+    //transforms the system from more than 3 dimentions to only 2 and 3 disks or
+    //just makes a copy of the disk system with 2 dimentions
+    std::vector< std::vector<double> > disk_system;
+    if(dimentions >= 3){
+        disk_system = transform_disk_system(read_system);
+    }else{
+        disk_system = read_system;
     }
 
     double vietori_rips_system;
-    Point intersection;
+    std::vector<double> intersection;
     //calculate max vietori rips scale of the disk system
     std::tie(vietori_rips_system, intersection) = max_vietori_rips_intersection(disk_system);
     double cech_scale = vietori_rips_system;
@@ -58,16 +68,17 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
         intersection = left_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
     }
 
+    if(dimentions >= 3){
+        //transform the intersecion back to a greater dimention
+        intersection = transform_intersection(disk_system, read_system, intersection);
+    }
+
     write_file(cech_scale, vietori_rips_system,
-               {intersection.x, intersection.y},
+               {intersection[0], intersection[1]},
                output_file);
     std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return true;
-    //validation: if 2d then apply all above steps with any number of disks.
-    //            if Rd, R>2 then must be only 3 disks and must apply a projection plane using the 3 centers of the disks, apply above steps and redimention the intersection points to Rd.
-    //
-    //output cech scale, point of intersection and wheter cech and vieti rips scale coincide
 }
 
 //#############################################################################

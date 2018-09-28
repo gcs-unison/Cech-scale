@@ -18,6 +18,8 @@
  *
  */
 #include <math.h>
+#include <cmath> //std::sqrt, std::abs
+#include <algorithm> //std::min
 
 bool circle_circle_intersection(double x0, double y0, double r0,
                                 double x1, double y1, double r1,

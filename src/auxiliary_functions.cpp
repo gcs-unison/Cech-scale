@@ -17,7 +17,7 @@ bool is_left(double x0, double y0,
 
 //############################################################################
 
-Point left_intersecting_point(double x0, double y0, double r0,
+std::vector<double> left_intersecting_point(double x0, double y0, double r0,
                               double x1, double y1, double r1)
 {
     double x_intersect1;
@@ -31,13 +31,13 @@ Point left_intersecting_point(double x0, double y0, double r0,
                                x_intersect2, y_intersect2);
 
     if(is_left(x0, y0, x1, y1, x_intersect1, y_intersect1)){
-        return Point(x_intersect1, y_intersect1);
+        return std::vector<double>({x_intersect1, y_intersect1});
     }else{
-        return Point(x_intersect2, y_intersect2);
+        return std::vector<double>({x_intersect2, y_intersect2});
     }
 }
 
-Point left_intersection_scaled(const std::vector<double>& disk1,
+std::vector<double> left_intersection_scaled(const std::vector<double>& disk1,
                                const std::vector<double>& disk2,
                                double scale)
 {
@@ -86,10 +86,10 @@ double lambda(const std::vector<double>& disk1,
               const std::vector<double>& disk3,
               double lambda_val)
 {
-    Point intersection = left_intersection_scaled(disk1, disk2, lambda_val);
+    std::vector<double> intersection = left_intersection_scaled(disk1, disk2, lambda_val);
 
-    double intersect_distance_to_disk3 = vectorial_distance(intersection.x,
-                                                            intersection.y,
+    double intersect_distance_to_disk3 = vectorial_distance(intersection[0],
+                                                            intersection[1],
                                                             disk3[0],
                                                             disk3[1]);
 
@@ -153,7 +153,7 @@ double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
     return vietori_rips_scale;
 }
 
-std::tuple<double, Point> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
+std::tuple<double, std::vector<double>> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
     double vietori_rips_scale = std::numeric_limits<double>::lowest();
@@ -174,7 +174,7 @@ std::tuple<double, Point> max_vietori_rips_intersection(const std::vector< std::
         }
     }
 
-    Point intersection = left_intersection_scaled(disk_system[d1_idx],
+    std::vector<double> intersection = left_intersection_scaled(disk_system[d1_idx],
                                                   disk_system[d2_idx],
                                                   vietori_rips_scale);
 
@@ -242,6 +242,10 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 
     file.close(); //close the input file
 
+    if(dimentions >= 3){
+        disk_system = transform_disk_system(disk_system);
+    }
+
     return true;
 }
 
@@ -276,6 +280,59 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
     file.close(); //close the input file
 
     return true;
+}
+
+//#############################################################################
+
+std::vector< std::vector<double> > transform_disk_system(std::vector< std::vector<double> > disk_system)
+{
+    //create a new 3x3 disk_system in 2d
+    std::vector< std::vector<double> > new_disk_system(3, std::vector<double>(3));
+    double sum_diff_sq01 = 0;
+    double sum_diff_sq02 = 0;
+    double sum_diff_sq12 = 0;
+    for(unsigned i = 0; i < disk_system[0].size() - 1; ++i){
+        sum_diff_sq01 += std::pow(disk_system[0][i] - disk_system[1][i], 2);
+        sum_diff_sq02 += std::pow(disk_system[0][i] - disk_system[2][i], 2);
+        sum_diff_sq12 += std::pow(disk_system[1][i] - disk_system[2][i], 2);
+    }
+
+    //new disk 1
+    new_disk_system[0][0] = 0;
+    new_disk_system[0][1] = 0;
+    new_disk_system[0][2] = disk_system[0].back();
+
+    //new disk 2
+    new_disk_system[1][0] = std::sqrt(sum_diff_sq01);
+    new_disk_system[1][1] = 0;
+    new_disk_system[1][2] = disk_system[1].back();
+
+    //new disk 2
+    new_disk_system[2][0] = (sum_diff_sq02 + sum_diff_sq01 - sum_diff_sq12) / (2 * std::sqrt(sum_diff_sq01));
+    new_disk_system[2][1] = std::sqrt(sum_diff_sq02 - std::pow(new_disk_system[2][0], 2));
+    new_disk_system[2][2] = disk_system[2].back();
+
+    return new_disk_system;
+}
+
+//#############################################################################
+
+std::vector<double> transform_intersection(std::vector< std::vector<double> > disk_system, std::vector< std::vector<double> > read_system, std::vector<double> c_star)
+{
+    int dimentions = 3;
+    double bc_numerator = disk_system[2][0]*disk_system[2][1] -
+                          (disk_system[1][0] - disk_system[2][0])*disk_system[2][1];
+    double bc_1 = (-disk_system[2][1]*(c_star[0] - disk_system[2][0]) +
+                   (disk_system[2][0]-disk_system[1][0])*(c_star[1]-disk_system[2][1]))/bc_numerator;
+    double bc_2 = (disk_system[2][1]*(c_star[0] - disk_system[2][0]) - disk_system[2][0]*(c_star[1]-disk_system[2][1]))/bc_numerator;
+    double bc_3 = 1 - bc_1 - bc_2;
+
+    std::vector<double> intersection(dimentions);
+    for(unsigned i = 0; i < read_system.size() - 1; ++ i)
+        intersection[i] = bc_1*read_system[0][i] + bc_2*read_system[1][i] + bc_3*read_system[2][i];
+
+
+    return intersection;
 }
 
 //#############################################################################

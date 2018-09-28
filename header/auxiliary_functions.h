@@ -54,7 +54,7 @@ bool is_left(double x0, double y0,
  *
  * @return The left intersection point of the two disks.
  */
-Point left_intersecting_point(double x0, double y0, double r0,
+std::vector<double> left_intersecting_point(double x0, double y0, double r0,
                               double x1, double y1, double r1);
 
 /**
@@ -70,7 +70,7 @@ Point left_intersecting_point(double x0, double y0, double r0,
  *
  * @return The left intersection point of the two disks.
  */
-Point left_intersection_scaled(const std::vector<double>& disk1,
+std::vector<double> left_intersection_scaled(const std::vector<double>& disk1,
                                const std::vector<double>& disk2,
                                double scale);
 
@@ -120,7 +120,7 @@ double max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
  * @return The maximum vietori rips distance between two disks in the system
  *          and the intersection of the disks with this distance.
  */
-std::tuple<double, Point> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
+std::tuple<double, std::vector<double>> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
 
 /**
  * rho function. Evaluates the map rho_m(lambda)
@@ -233,6 +233,35 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
  */
 bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
                 std::string filename = "textfiles/Cech-Scale.txt");
+
+//#############################################################################
+
+/**
+ * Given a disk system of 3 disks and a dimention greater than 2, this function
+ * applies a projection to the disk system to transform it into a system of 3
+ * disks and dimention 2.
+ *
+ * @param disk_system The disk system of 3 disks and dimention greater than 2
+ *
+ * @return The projection of the disk system into a 2d plane: a disk system of
+ *         3 disks and dimention 2.
+ */
+std::vector< std::vector<double> > transform_disk_system(std::vector< std::vector<double> > disk_system);
+
+//#############################################################################
+
+/**
+ * Given a disk system of 3 disks, dimention greater than 2, its projection,
+ * to a 2d plane, and the intersection of the projected system, calculates the
+ * corresponding intersection of the original disk system.
+ *
+ * @param disk_system The projection of the disk system.
+ * @param read_system The original disk system.
+ * @param c_star The intersection of the projected disk system.
+ *
+ * @return The corresponding intersection of the original disk system.
+ */
+std::vector<double> transform_intersection(std::vector< std::vector<double> > disk_system, std::vector< std::vector<double> > read_system, std::vector<double> c_star);
 
 //#############################################################################
 
