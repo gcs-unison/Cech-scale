@@ -55,7 +55,7 @@ bool is_left(double x0, double y0,
  * @return The left intersection point of the two disks.
  */
 std::vector<double> left_intersecting_point(double x0, double y0, double r0,
-                              double x1, double y1, double r1);
+                                            double x1, double y1, double r1);
 
 /**
  * Calculates the intersecting points of the 2d disks
@@ -67,12 +67,13 @@ std::vector<double> left_intersecting_point(double x0, double y0, double r0,
  *              center and r1 is its radius.
  * @param disk2 Vector with form (x2, y2, r2). x2,y2 are the coordinates of the
  *              center and r2 is its radius.
+ * @param scale Scale for the radii of the disks.
  *
  * @return The left intersection point of the two disks.
  */
 std::vector<double> left_intersection_scaled(const std::vector<double>& disk1,
-                               const std::vector<double>& disk2,
-                               double scale);
+                                             const std::vector<double>& disk2,
+                                             double scale);
 
 
 /**

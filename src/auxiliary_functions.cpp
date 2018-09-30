@@ -18,7 +18,7 @@ bool is_left(double x0, double y0,
 //############################################################################
 
 std::vector<double> left_intersecting_point(double x0, double y0, double r0,
-                              double x1, double y1, double r1)
+                                            double x1, double y1, double r1)
 {
     double x_intersect1;
     double y_intersect1;
@@ -57,7 +57,7 @@ double rho(const std::vector< std::vector<double> >& disk_system,
             if(disk1 == disk2)
                 continue;
 
-            double rho_max = true;
+            bool rho_max = true;
             double min_rho = std::numeric_limits<double>::max();
             for(std::vector<double> disk3 : disk_system){
                 if(disk3 == disk1 || disk3 == disk2)
@@ -100,25 +100,24 @@ double lambda(const std::vector<double>& disk1,
 
 double bisection(const std::vector< std::vector<double> >& disk_system,
                  double a, double b,
-                 int dig_prec){
+                 int dig_prec)
+{
     double mp = 0;
     double rho_b = rho(disk_system, b);
     double TOLERANCE = 1e-12;
 
     int num_iter = ceil((log10(a*(sqrt(4.0/3.0)-1)) + dig_prec)/log10(2.0));
-    for(int n=1; n <= num_iter; n++){
+    for(int n = 1; n <= num_iter; n++){
         mp = 0.5*(a + b);
         double rho_mp = rho(disk_system, mp);
 
         if(std::abs(rho_mp) <= TOLERANCE){
             break;
+        }else if(rho_mp * rho_b < 0){
+            a = mp;
         }else{
-            if(rho_mp * rho_b < 0){
-                a = mp;
-            }else{
-                b = mp;
-                rho_b = rho_mp;
-            }
+            b = mp;
+            rho_b = rho_mp;
         }
     }
 
@@ -175,8 +174,8 @@ std::tuple<double, std::vector<double>> max_vietori_rips_intersection(const std:
     }
 
     std::vector<double> intersection = left_intersection_scaled(disk_system[d1_idx],
-                                                  disk_system[d2_idx],
-                                                  vietori_rips_scale);
+                                                                disk_system[d2_idx],
+                                                                vietori_rips_scale);
 
     return std::make_tuple(vietori_rips_scale, intersection);
 }
@@ -242,10 +241,6 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 
     file.close(); //close the input file
 
-    if(dimentions >= 3){
-        disk_system = transform_disk_system(disk_system);
-    }
-
     return true;
 }
 
@@ -307,7 +302,7 @@ std::vector< std::vector<double> > transform_disk_system(std::vector< std::vecto
     new_disk_system[1][1] = 0;
     new_disk_system[1][2] = disk_system[1].back();
 
-    //new disk 2
+    //new disk 3
     new_disk_system[2][0] = (sum_diff_sq02 + sum_diff_sq01 - sum_diff_sq12) / (2 * std::sqrt(sum_diff_sq01));
     new_disk_system[2][1] = std::sqrt(sum_diff_sq02 - std::pow(new_disk_system[2][0], 2));
     new_disk_system[2][2] = disk_system[2].back();
@@ -319,18 +314,19 @@ std::vector< std::vector<double> > transform_disk_system(std::vector< std::vecto
 
 std::vector<double> transform_intersection(std::vector< std::vector<double> > disk_system, std::vector< std::vector<double> > read_system, std::vector<double> c_star)
 {
+    //int dimentions = read_system[0].size() - 1;
     int dimentions = 3;
     double bc_numerator = disk_system[2][0]*disk_system[2][1] -
-                          (disk_system[1][0] - disk_system[2][0])*disk_system[2][1];
+                          (disk_system[2][0] - disk_system[1][0])*disk_system[2][1];
     double bc_1 = (-disk_system[2][1]*(c_star[0] - disk_system[2][0]) +
                    (disk_system[2][0]-disk_system[1][0])*(c_star[1]-disk_system[2][1]))/bc_numerator;
-    double bc_2 = (disk_system[2][1]*(c_star[0] - disk_system[2][0]) - disk_system[2][0]*(c_star[1]-disk_system[2][1]))/bc_numerator;
+    double bc_2 = (disk_system[2][1]*(c_star[0] - disk_system[2][0]) -
+                   disk_system[2][0]*(c_star[1]-disk_system[2][1])) / bc_numerator;
     double bc_3 = 1 - bc_1 - bc_2;
 
     std::vector<double> intersection(dimentions);
-    for(unsigned i = 0; i < read_system.size() - 1; ++ i)
+    for(unsigned i = 0; i < read_system[0].size() - 1; ++i)
         intersection[i] = bc_1*read_system[0][i] + bc_2*read_system[1][i] + bc_3*read_system[2][i];
-
 
     return intersection;
 }

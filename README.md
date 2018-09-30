@@ -14,14 +14,22 @@ If you have makefile you only need to run go inside the project folder and run:
 make
 ```
 
+And it will compile the program and output the file "cech.exe" with the program.
+
 ## Running
 
-The program by default reads the disk system from the file "texfiles/Disks-system.txt" and writes the results to the file "textfiles/Cech_scale.txt".
-You can also specify others files to read from and write to by calling the program with the filenames you'd like, e.g.
+The program by default reads the disk system from the file "texfiles/disks_system.txt"
+and writes the results to the file "textfiles/cech_results.txt".
+
+You can also specify others files to read from and write to by calling the program
+with the filenames you'd like, e.g for a linux system:
 
 ```
 ./cech.exe disks.txt results.txt
 ```
+
+And this would read a disk system from the file "disks.txt" and write the
+results of the program to "results.txt"
 
 ## Authors
 
@@ -38,4 +46,8 @@ the paper "A numerical approach for the filtered generalized Cech complex",
 by Jesus F. Espinoza, Rosalia Hernandez-Amador, Hector Alfredo Hernandez
 Hernandez and Beatriz Ramonetti Valencia.
 * Tim Voght's C implementation of the intersection of two circles.
+
+## More info
+
+You can find more info about the original article [here](https://arxiv.org/abs/1809.08175)
 

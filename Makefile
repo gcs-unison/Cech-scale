@@ -2,8 +2,8 @@ IDIR = header
 CXX = g++
 LDFLAGS=-lm
 
-CXXFLAGS = -std=c++14 -O2 -Wall -I$(IDIR)
-DEBUGFLAGS = -std=c++14 -g -Wall -I$(IDIR)
+CXXFLAGS = -std=c++11 -O2 -Wall -I$(IDIR)
+DEBUGFLAGS = -std=c++11 -g -Wall -I$(IDIR)
 
 ODIR = obj
 SDIR = src

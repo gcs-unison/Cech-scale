@@ -4,7 +4,7 @@
 /* circle_circle_intersection() *
  * Determine the points where 2 circles in a common plane intersect.
  *
- * int circle_circle_intersection(
+ * bool circle_circle_intersection(
  *                                // center and radius of 1st circle
  *                                double x0, double y0, double r0,
  *                                // center and radius of 2nd circle
@@ -17,9 +17,7 @@
  * This is a public domain work. 3/26/2005 Tim Voght
  *
  */
-#include <math.h>
-#include <cmath> //std::sqrt, std::abs
-#include <algorithm> //std::min
+#include <cmath> //std::sqrt, std::abs, std::hypot
 
 bool circle_circle_intersection(double x0, double y0, double r0,
                                 double x1, double y1, double r1,

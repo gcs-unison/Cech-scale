@@ -32,33 +32,33 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
 
         unsigned d1_idx = 0;
         unsigned d2_idx = 1;
-        unsigned d3_idx = 2;
         unsigned number_disks = disk_system.size();
         for(unsigned i = 0; i < number_disks - 2; ++i){
             for(unsigned j = i + 1; j < number_disks - 1; ++j){
                 for(unsigned k = j + 1; k < number_disks; ++k){
 
-                    //calculate vietori rips of disk1, disk2, disk3
-                    double vietori_rips_d123 = max_vietori_rips({disk_system[i],
-                                                                 disk_system[j],
-                                                                 disk_system[k]});
+                    //calculate vietori rips of disk_i, disk_j, disk_k
+                    std::vector<std::vector<double>> disk_systemijk = {disk_system[i],
+                                                                       disk_system[j],
+                                                                       disk_system[k]};
+                    double vietori_rips_dijk = max_vietori_rips(disk_systemijk);
 
-                    if(sqrt(4.0/3.0)*vietori_rips_d123 >= cech_scale){
-                        if(vietori_rips_d123 > cech_scale){
-                            cech_scale = vietori_rips_d123;
+
+                    if(sqrt(4.0/3.0)*vietori_rips_dijk < cech_scale){
+                        if(vietori_rips_dijk > cech_scale){
+                            cech_scale = vietori_rips_dijk;
                             d1_idx = i;
                             d2_idx = j;
-                            d3_idx = k;
                         }
-
-
                     }else{
-                        double cech_bisection = bisection(disk_system, vietori_rips_d123, sqrt(4.0/3.0)*vietori_rips_d123, 12);
+                        double cech_bisection = bisection(disk_systemijk,
+                                                          vietori_rips_dijk,
+                                                          sqrt(4.0/3.0)*vietori_rips_dijk,
+                                                          12);
                         if(cech_bisection > cech_scale){
                             cech_scale = cech_bisection;
                             d1_idx = i;
                             d2_idx = j;
-                            d3_idx = k;
                         }
                     }
                 }
@@ -73,9 +73,7 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
         intersection = transform_intersection(disk_system, read_system, intersection);
     }
 
-    write_file(cech_scale, vietori_rips_system,
-               {intersection[0], intersection[1]},
-               output_file);
+    write_file(cech_scale, vietori_rips_system, intersection, output_file);
     std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return true;
