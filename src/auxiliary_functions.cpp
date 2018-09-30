@@ -231,7 +231,6 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
         return false;
     }
 
-    //initialize N's size knowing d
     disk_system = std::vector< std::vector<double> >(number_disks,
                     std::vector<double>(dimentions+1));
 
@@ -262,6 +261,7 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
         file << "The cech scale and vietori rips coincide." << std::endl;
     }else{
         file << "The cech scale and vietori rips DO NOT coincide." << std::endl;
+        file << "Vietori rips scale: " << vietori_rips << std::endl;
     }
 
     file << "Cech scale: " << cech_scale << std::endl;
@@ -314,8 +314,7 @@ std::vector< std::vector<double> > transform_disk_system(std::vector< std::vecto
 
 std::vector<double> transform_intersection(std::vector< std::vector<double> > disk_system, std::vector< std::vector<double> > read_system, std::vector<double> c_star)
 {
-    //int dimentions = read_system[0].size() - 1;
-    int dimentions = 3;
+    int dimentions = read_system[0].size() - 1;
     double bc_numerator = disk_system[2][0]*disk_system[2][1] -
                           (disk_system[2][0] - disk_system[1][0])*disk_system[2][1];
     double bc_1 = (-disk_system[2][1]*(c_star[0] - disk_system[2][0]) +

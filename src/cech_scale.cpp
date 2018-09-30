@@ -44,22 +44,21 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
                     double vietori_rips_dijk = max_vietori_rips(disk_systemijk);
 
 
-                    if(sqrt(4.0/3.0)*vietori_rips_dijk < cech_scale){
+                    if(sqrt(4.0/3.0)*vietori_rips_dijk >= cech_scale){
                         if(vietori_rips_dijk > cech_scale){
                             cech_scale = vietori_rips_dijk;
-                            d1_idx = i;
-                            d2_idx = j;
+                        }else{
+                            double cech_bisection = bisection(disk_systemijk,
+                                                              vietori_rips_dijk,
+                                                              sqrt(4.0/3.0)*vietori_rips_dijk,
+                                                              12);
+                            if(cech_bisection > cech_scale){
+                                cech_scale = cech_bisection;
+                            }
                         }
-                    }else{
-                        double cech_bisection = bisection(disk_systemijk,
-                                                          vietori_rips_dijk,
-                                                          sqrt(4.0/3.0)*vietori_rips_dijk,
-                                                          12);
-                        if(cech_bisection > cech_scale){
-                            cech_scale = cech_bisection;
-                            d1_idx = i;
-                            d2_idx = j;
-                        }
+
+                        d1_idx = i;
+                        d2_idx = j;
                     }
                 }
             }
