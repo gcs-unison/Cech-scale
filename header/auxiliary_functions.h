@@ -10,7 +10,6 @@
 #include <string> //for std::string
 #include <algorithm> //for std::min, std::max
 
-#include "point.h"
 #include "circle_circle_intersection.h"
 
 /**
