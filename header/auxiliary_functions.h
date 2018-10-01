@@ -153,17 +153,9 @@ double rho(const std::vector< std::vector<double> >& disk_system,
            double lambda_val);
 
 /*
- * Es un escalar. Se calcula para una terna de discos. Por ejemplo, si tienes
- * los tres discos D1, D2 yD3, y tomas lambda=1.5, entonces Lambda_{1,2}^{3}
- * se calcula reescalando los radios de D1 y D2 por un factor de 1.5, luego
- * calculas el punto de intersección que está a la izquierda del vector que
- * va del centro de D1 al centro de D2 (esto es d_ij(lambda) = d_{1,2}(1.5)),
- * después calculas la distancia al centro de D3, esto es: ||d_12(1.5) - c3||.
- * Esa cantidad se la restas al radio de D3 reescalado por lambda=1.5.
- *
- * Given three disks in a space, lambda is the distance from the third disk
- * scaled by a number to the left intersection of the disk 1 and 2 scaled by
- * the same number.
+ * Given 3 disks in a space, lambda is the distance from the third disk scaled
+ * by lambda_val to the left intersection of the disk 1 scaled by lambda_val
+ * with disk 2 scaled by lambda_val.
  *
  * @param disk1 Vector with the positions of disk1 and its radius as last entry.
  * @param disk2 Vector with the positions of disk2 and its radius as last entry.
