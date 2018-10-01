@@ -38,11 +38,38 @@ std::vector<double> left_intersecting_point(double x0, double y0, double r0,
 }
 
 std::vector<double> left_intersection_scaled(const std::vector<double>& disk1,
-                               const std::vector<double>& disk2,
-                               double scale)
+                                             const std::vector<double>& disk2,
+                                             double scale)
 {
     return left_intersecting_point(disk1[0], disk1[1], disk1[2]*scale,
                                    disk2[0], disk2[1], disk2[2]*scale);
+}
+
+std::vector<double> right_intersection_scaled(const std::vector<double>& disk1,
+                                              const std::vector<double>& disk2,
+                                              double scale)
+{
+    double x0 = disk1[0];
+    double y0 = disk1[1];
+    double r0 = disk1[2]*scale;
+    double x1 = disk2[0];
+    double y1 = disk2[1];
+    double r1 = disk2[2]*scale;
+    double x_intersect1;
+    double y_intersect1;
+    double x_intersect2;
+    double y_intersect2;
+
+    circle_circle_intersection(x0, y0, r0,
+                               x1, y1, r1,
+                               x_intersect1, y_intersect1,
+                               x_intersect2, y_intersect2);
+
+    if(is_left(x0, y0, x1, y1, x_intersect1, y_intersect1)){ //reverse of left intersecting point
+        return std::vector<double>({x_intersect2, y_intersect2});
+    }else{
+        return std::vector<double>({x_intersect1, y_intersect1});
+    }
 }
 
 //############################################################################

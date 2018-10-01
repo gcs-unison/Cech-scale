@@ -76,6 +76,24 @@ std::vector<double> left_intersection_scaled(const std::vector<double>& disk1,
 
 
 /**
+ * Calculates the intersecting points of the 2d disks
+ * disk2:(x1, y1, r1) and disk2:(x2, y2, r2)
+ * And selects the one to the right of the vector going from the center of disk1
+ * to the center of disk2
+ *
+ * @param disk1 Vector with form (x1, y1, r1). x1,y1 are the coordinates of the
+ *              center and r1 is its radius.
+ * @param disk2 Vector with form (x2, y2, r2). x2,y2 are the coordinates of the
+ *              center and r2 is its radius.
+ * @param scale Scale for the radii of the disks.
+ *
+ * @return The left intersection point of the two disks.
+ */
+std::vector<double> right_intersection_scaled(const std::vector<double>& disk1,
+                               const std::vector<double>& disk2,
+                               double scale);
+
+/**
  * Calculates the vietori rips distance of two disks.
  *
  * @param x0 x coordinate of disk 1.

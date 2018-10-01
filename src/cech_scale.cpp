@@ -64,7 +64,10 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
             }
         }
 
-        intersection = left_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
+        if(dimentions < 3)
+            intersection = left_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
+        else
+            intersection = right_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
     }
 
     if(dimentions >= 3){
