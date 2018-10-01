@@ -45,7 +45,7 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
 
 
                     if(sqrt(4.0/3.0)*vietori_rips_dijk >= cech_scale){
-                        if(vietori_rips_dijk > cech_scale){
+                        if(rho(disk_systemijk, vietori_rips_dijk) >= 0){
                             cech_scale = vietori_rips_dijk;
                         }else{
                             double cech_bisection = bisection(disk_systemijk,
