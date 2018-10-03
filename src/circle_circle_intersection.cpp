@@ -28,11 +28,11 @@ bool circle_circle_intersection(double x0, double y0, double r0,
         //defined as follows
         double dr = std::abs(r0 - r1);
         if(r0 > r1){
-            xi = x0 + r0*(x1-x0)/dr
-            yi = y0 + r0*(y1-y0)/dr
+            xi = x0 + r0*(x1-x0)/dr;
+            yi = y0 + r0*(y1-y0)/dr;
         }else{
-            xi = x1 + r1*(x0-x1)/dr
-            yi = y1 + r1*(y0-y1)/dr
+            xi = x1 + r1*(x0-x1)/dr;
+            yi = y1 + r1*(y0-y1)/dr;
         }
         xi_prime = xi;
         yi_prime = yi;
