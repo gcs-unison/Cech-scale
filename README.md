@@ -4,17 +4,20 @@ This program calculates the cech scale of a system of n disk in 2D. It can also 
 
 ### Prerequisites
 
-You only need a C++ compiler compatible with C++11 standard or above. Also makefile is recommended to easily compile the program.
+You only need a C++ compiler compatible with C++11 standard or above. Also cmake is recommended to easily compile the program.
 
 ### Compiling
 
-If you have makefile you only need to run go inside the project folder and run:
+If you have cmake and are under a GNU/LINUX distribution, you can use these commands:
 
 ```
+cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
+cd build
 make
+cd ..
 ```
 
-And it will compile the program and output the file "cech.exe" with the program.
+And it will compile the program and output the file "Cech-scale" with the program.
 
 ## Running
 
@@ -25,7 +28,7 @@ You can also specify others files to read from and write to by calling the progr
 with the filenames you'd like, e.g for a linux system:
 
 ```
-./cech.exe disks.txt results.txt
+./Cech-scale disks.txt results.txt
 ```
 
 And this would read a disk system from the file "disks.txt" and write the
