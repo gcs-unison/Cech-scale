@@ -285,13 +285,13 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
 
     //checks check_scale == vietori_rips
     if(std::abs(cech_scale - vietori_rips) < TOLERANCE){
-        file << "The Cech-scale matches with the Vietori-rips scale." << std::endl;
+        file << "The Cech scale matches with the Vietori-Rips scale." << std::endl;
     }else{
-        file << "The Vietori-rips is greater than the cech scale." << std::endl;
-        file << "Vietori-rips scale: " << vietori_rips << std::endl;
+        file << "The Cech scale is greater than the Vietori-Rips scale." << std::endl;
+        file << "Vietori-Rips scale: " << vietori_rips << std::endl;
     }
 
-    file << "Cech-scale: " << cech_scale << std::endl;
+    file << "Cech scale: " << cech_scale << std::endl;
     file << std::endl;
     file << "The intersection point:" << std::endl;
 

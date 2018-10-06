@@ -8,7 +8,7 @@ You only need a C++ compiler compatible with C++11 standard or above. Also cmake
 
 ### Compiling
 
-If you have cmake and are under a GNU/LINUX distribution, you can use these commands:
+If you have cmake and are under a GNU/Linux distribution, you can use these commands:
 
 ```
 cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
