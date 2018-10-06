@@ -5,17 +5,16 @@
 bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_file /*= ""*/)
 {
     //read and validate disk system from text file
-    std::cout << "Reading from file: " << input_file << std::endl;
     std::vector< std::vector<double> > read_system;
     if(!read_file(read_system, input_file)){
         return false;
     }
-    int dimentions = read_system[0].size() - 1;
+    int dimensions = read_system[0].size() - 1;
 
-    //transforms the system from more than 3 dimentions to only 2 and 3 disks or
-    //just makes a copy of the disk system with 2 dimentions
+    //transforms the system from more than 3 dimensions to only 2 and 3 disks or
+    //just makes a copy of the disk system with 2 dimensions
     std::vector< std::vector<double> > disk_system;
-    if(dimentions >= 3){
+    if(dimensions >= 3){
         disk_system = transform_disk_system(read_system);
     }else{
         disk_system = read_system;
@@ -64,19 +63,18 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
             }
         }
 
-        if(dimentions < 3)
+        if(dimensions < 3)
             intersection = left_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
         else
             intersection = right_intersection_scaled(disk_system[d1_idx], disk_system[d2_idx], cech_scale);
     }
 
-    if(dimentions >= 3){
-        //transform the intersecion back to a greater dimention
+    if(dimensions >= 3){
+        //transform the intersecion back to a greater dimension
         intersection = transform_intersection(disk_system, read_system, intersection);
     }
 
     write_file(cech_scale, vietori_rips_system, intersection, output_file);
-    std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return true;
 }

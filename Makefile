@@ -24,7 +24,7 @@ DEBUGOBJ = $(patsubst %, $(DEBUGODIR)/%.o, $(_OBJ) $(GENMOD))
 $(ODIR)/%.o: $(SDIR)/%.cpp $(DEPS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(LDFLAGS)
 
-$(OUTDIR)/cech.exe: $(OBJ)
+$(OUTDIR)/Cech-scale: $(OBJ)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LDFLAGS)
 
 $(DEBUGODIR)/%.o: $(SDIR)/%.cpp $(DEPS)

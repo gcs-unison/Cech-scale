@@ -243,26 +243,26 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 
     std::ifstream file(filename);
     if(!file.is_open()){
-        std::cout << "Error. Couldn't find file with path: " << filename << std::endl;
+        std::cerr << "Error. Couldn't find file with path: " << filename << std::endl;
         return false;
     }
 
     int number_disks;
-    int dimentions;
+    int dimensions;
     file >> number_disks;
-    file >> dimentions;
+    file >> dimensions;
 
-    if(number_disks <= 0 || dimentions <= 0 ||
-       (dimentions > 2 && number_disks > 3)){
+    if(number_disks <= 0 || dimensions <= 0 ||
+       (dimensions > 2 && number_disks > 3)){
         file.close();
         return false;
     }
 
     disk_system = std::vector< std::vector<double> >(number_disks,
-                    std::vector<double>(dimentions+1));
+                    std::vector<double>(dimensions+1));
 
     for(int i = 0; i < number_disks; ++i)
-        for(int j = 0; j < dimentions+1; ++j)
+        for(int j = 0; j < dimensions+1; ++j)
             file >> disk_system[i][j];
 
     file.close(); //close the input file
@@ -279,19 +279,20 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
 
     std::ofstream file(filename);
     if(!file.is_open()){
-        std::cout << "Error. Couldn't create file: " << filename << std::endl;
+        std::cerr << "Error. Couldn't create file: " << filename << std::endl;
         return false;
     }
 
     //checks check_scale == vietori_rips
     if(std::abs(cech_scale - vietori_rips) < TOLERANCE){
-        file << "The cech scale and vietori rips coincide." << std::endl;
+        file << "The Cech-scale matches with the Vietori-rips scale." << std::endl;
     }else{
-        file << "The cech scale and vietori rips DO NOT coincide." << std::endl;
-        file << "Vietori rips scale: " << vietori_rips << std::endl;
+        file << "The Vietori-rips is greater than the cech scale." << std::endl;
+        file << "Vietori-rips scale: " << vietori_rips << std::endl;
     }
 
-    file << "Cech scale: " << cech_scale << std::endl;
+    file << "Cech-scale: " << cech_scale << std::endl;
+    file << std::endl;
     file << "The intersection point:" << std::endl;
 
     file << "(" << intersection[0];
@@ -341,7 +342,7 @@ std::vector< std::vector<double> > transform_disk_system(std::vector< std::vecto
 
 std::vector<double> transform_intersection(std::vector< std::vector<double> > disk_system, std::vector< std::vector<double> > read_system, std::vector<double> c_star)
 {
-    int dimentions = read_system[0].size() - 1;
+    int dimensions = read_system[0].size() - 1;
     double bc_numerator = disk_system[2][0]*disk_system[2][1] -
                           (disk_system[2][0] - disk_system[1][0])*disk_system[2][1];
     double bc_1 = (-disk_system[2][1]*(c_star[0] - disk_system[2][0]) +
@@ -350,7 +351,7 @@ std::vector<double> transform_intersection(std::vector< std::vector<double> > di
                    disk_system[2][0]*(c_star[1]-disk_system[2][1])) / bc_numerator;
     double bc_3 = 1 - bc_1 - bc_2;
 
-    std::vector<double> intersection(dimentions);
+    std::vector<double> intersection(dimensions);
     for(unsigned i = 0; i < read_system[0].size() - 1; ++i)
         intersection[i] = bc_1*read_system[0][i] + bc_2*read_system[1][i] + bc_3*read_system[2][i];
 

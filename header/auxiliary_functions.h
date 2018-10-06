@@ -3,7 +3,7 @@
 
 #include <tuple> //for std::tuple
 #include <cmath> //for std::sqrt, std::pow
-#include <iostream> //for std::cout, std::endl
+#include <iostream> //for std::cerr, std::endl
 #include <fstream> // for std::ofstream, std::ifstream
 #include <limits> //for std::numeric_limits<double>::lowest
 #include <vector> //for std::vector
@@ -214,7 +214,7 @@ bool rho_nonnegative(const std::vector< std::vector<double> >& disk_system,
  *                    radius of the disk.
  * @param filename The file's name where the disk system is defined.
  *                 The first number must be the number of disks, the second the
- *                 number of dimentions and then rows of coordinates of each
+ *                 number of dimensions and then rows of coordinates of each
  *                 disk and the last column must be the radius of the disk.
  *                 "Disk-system.txt" by default
  *
@@ -247,21 +247,21 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
 //#############################################################################
 
 /**
- * Given a disk system of 3 disks and a dimention greater than 2, this function
+ * Given a disk system of 3 disks and a dimension greater than 2, this function
  * applies a projection to the disk system to transform it into a system of 3
- * disks and dimention 2.
+ * disks and dimension 2.
  *
- * @param disk_system The disk system of 3 disks and dimention greater than 2
+ * @param disk_system The disk system of 3 disks and dimension greater than 2
  *
  * @return The projection of the disk system into a 2d plane: a disk system of
- *         3 disks and dimention 2.
+ *         3 disks and dimension 2.
  */
 std::vector< std::vector<double> > transform_disk_system(std::vector< std::vector<double> > disk_system);
 
 //#############################################################################
 
 /**
- * Given a disk system of 3 disks, dimention greater than 2, its projection,
+ * Given a disk system of 3 disks, dimension greater than 2, its projection,
  * to a 2d plane, and the intersection of the projected system, calculates the
  * corresponding intersection of the original disk system.
  *
