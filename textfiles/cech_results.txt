@@ -1,4 +1,5 @@
-The cech scale and vietori rips coincide.
+The Cech scale agrees with the Vietori-Rips scale.
 Cech scale: 5.6415
+
 The intersection point:
 (4.55471, 5.49536)

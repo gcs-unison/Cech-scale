@@ -9,8 +9,10 @@
  */
 
 #include <iostream> //for std::cout, std::endl
+#include <tuple> // for std::tie
 
 #include "cech_scale.h"
+#include "auxiliary_functions.h"
 
 
 int main(int argc, char *argv[])
@@ -22,10 +24,20 @@ int main(int argc, char *argv[])
     if(argc >= 3)
         output_file = std::string(argv[2]);
 
+    //read and validate disk system from text file
     std::cout << "Reading from file: " << input_file << std::endl;
-    if(calculate_cech_scale(input_file, output_file))
-        std::cout << "Wrote results to file: " << output_file << std::endl;
+    std::vector< std::vector<double> > disk_system;
+    if(!read_file(disk_system, input_file)){
+        return 1;
+    }
 
+    double cech_scale;
+    double vietori_rips;
+    std::vector<double> intersection;
+    std::tie(cech_scale, vietori_rips, intersection) = calculate_cech_scale(disk_system);
+
+    write_file(cech_scale, vietori_rips, intersection, output_file);
+    std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return 0;
 }

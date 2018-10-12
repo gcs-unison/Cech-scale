@@ -19,12 +19,13 @@ bool circle_circle_intersection(double x0, double y0, double r0,
     d = std::hypot(dx,dy); // Suggested by Keith Briggs
 
     /* Check for solvability. */
-    if (d > (r0 + r1) && std::abs(d - (r0+r1)) > 1e-12)
+    if (d > (r0 + r1) && approx_equal(d, r0+r1))
     /* no solution. circles do not intersect. */
         return false;
 
-    if (d < std::abs(r0 - r1) && std::abs(d - std::abs(r0-r1)) > 1e-12){
-        //no solution. one circle is contained in the other so intersection is
+    if (d < std::abs(r0 - r1) && approx_equal(d, std::abs(r0-r1))){
+        //no solution.
+        //One circle is contained in the other so intersection is
         //defined as follows
         double dr = std::abs(r0 - r1);
         if(r0 > r1){

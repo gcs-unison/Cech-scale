@@ -2,22 +2,18 @@
 
 //#############################################################################
 
-bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_file /*= ""*/)
+std::tuple<double, double, std::vector<double>>
+calculate_cech_scale(std::vector< std::vector<double> > input_system)
 {
-    //read and validate disk system from text file
-    std::vector< std::vector<double> > read_system;
-    if(!read_file(read_system, input_file)){
-        return false;
-    }
-    int dimensions = read_system[0].size() - 1;
+    int dimensions = input_system[0].size() - 1;
 
     //transforms the system from more than 3 dimensions to only 2 and 3 disks or
     //just makes a copy of the disk system with 2 dimensions
     std::vector< std::vector<double> > disk_system;
     if(dimensions >= 3){
-        disk_system = transform_disk_system(read_system);
+        disk_system = transform_disk_system(input_system);
     }else{
-        disk_system = read_system;
+        disk_system = input_system;
     }
 
     double vietori_rips_system;
@@ -71,12 +67,10 @@ bool calculate_cech_scale(std::string input_file /*= ""*/, std::string output_fi
 
     if(dimensions >= 3){
         //transform the intersecion back to a greater dimension
-        intersection = transform_intersection(disk_system, read_system, intersection);
+        intersection = transform_intersection(disk_system, input_system, intersection);
     }
 
-    write_file(cech_scale, vietori_rips_system, intersection, output_file);
-
-    return true;
+    return std::make_tuple(cech_scale, vietori_rips_system, intersection);
 }
 
 //#############################################################################

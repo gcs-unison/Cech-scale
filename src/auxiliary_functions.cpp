@@ -7,6 +7,12 @@ double vectorial_distance(double x0, double y0, double x1, double y1)
 }
 
 //############################################################################
+bool approx_equal(double d1, double d2, double tol /*= 1e-12*/)
+{
+    return std::abs(d1 -d2) < tol;
+}
+
+//############################################################################
 
 bool is_left(double x0, double y0,
              double x1, double y1,
@@ -179,7 +185,8 @@ double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
     return vietori_rips_scale;
 }
 
-std::tuple<double, std::vector<double>> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
+std::tuple<double, std::vector<double>>
+max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
     double vietori_rips_scale = std::numeric_limits<double>::lowest();
@@ -275,17 +282,14 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
                 std::string filename /*= "textfiles/Cech-Scale.txt"*/)
 {
-    const double TOLERANCE = 1e-12;
-
     std::ofstream file(filename);
     if(!file.is_open()){
         std::cerr << "Error. Couldn't create file: " << filename << std::endl;
         return false;
     }
 
-    //checks check_scale == vietori_rips
-    if(std::abs(cech_scale - vietori_rips) < TOLERANCE){
-        file << "The Cech scale matches with the Vietori-Rips scale." << std::endl;
+    if(approx_equal(cech_scale, vietori_rips)){
+        file << "The Cech scale agrees with the Vietori-Rips scale." << std::endl;
     }else{
         file << "The Cech scale is greater than the Vietori-Rips scale." << std::endl;
         file << "Vietori-Rips scale: " << vietori_rips << std::endl;

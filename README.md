@@ -54,3 +54,5 @@ Hernandez and Beatriz Ramonetti Valencia.
 
 You can find more info about the original article [here](https://arxiv.org/abs/1809.08175)
 
+A more in depth manual of the project can be found [in the manual directory](https://github.com/gcs-unison/Cech-scale/blob/master/manual/Cech_scale_manual.pdf)
+

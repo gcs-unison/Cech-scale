@@ -25,6 +25,19 @@
 double vectorial_distance(double x0, double y0, double x1, double y1);
 
 /**
+ * Compares if two numbers are approximately equal given a tolerance.
+ *
+ * @param d1 A number
+ * @param d2 A number
+ * @param tol Tolerance for the comparison. The absolute difference must be
+ *            lower than this number.
+ *
+ * @return If the absolute difference of the two numbers is lower than the
+ *         tolerance, returns true. Otherwise returns false.
+ */
+bool approx_equal(double d1, double d2, double tol = 1e-12);
+
+/**
  * Tells wheter the point (ax, ay) is to the left of the vector (x1-x0, y1-y0) or not.
  *
  * @param x0 x coordinate of starting point of vector.
@@ -138,10 +151,14 @@ double max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
  * @return The maximum vietori rips distance between two disks in the system
  *          and the intersection of the disks with this distance.
  */
-std::tuple<double, std::vector<double>> max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
+std::tuple<double, std::vector<double>>
+max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
 
 /**
  * rho function. Evaluates the map rho_m(lambda)
+ *
+ * This function corresponds to algorithm 2 of the paper:
+ * "A numerical approach for the filtered generalized cech complex".
  *
  * @param disk_system The system of disk in the space. The last column is the
  *                    radius of the disk and all previous are the coordinates
@@ -195,6 +212,10 @@ double bisection(const std::vector< std::vector<double> >& disk_system,
 /**
  * Checks whether for all disks in the disk system and the lambda value
  * specified, the rho function always returns a positive number or not.
+ *
+ * This function corresponds to algorithm 3 of the paper:
+ * "A numerical approach for the filtered generalized cech complex".
+ *
  * @param disk_system System of disks in R^n.
  * @param lambda_val Value needed to evaluate rho.
  *
