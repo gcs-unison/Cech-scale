@@ -159,48 +159,48 @@ double bisection(const std::vector< std::vector<double> >& disk_system,
 
 //#############################################################################
 
-double vietori_rips(double x0, double y0, double r0,
+double vietoris_rips(double x0, double y0, double r0,
                     double x1, double y1, double r1)
 {
     return vectorial_distance(x0, y0, x1, y1) / (r0 + r1);
 }
 
-double vietori_rips(const std::vector<double>& disk1,
+double vietoris_rips(const std::vector<double>& disk1,
                     const std::vector<double>& disk2)
 {
-    return vietori_rips(disk1[0], disk1[1], disk1[2],
+    return vietoris_rips(disk1[0], disk1[1], disk1[2],
                         disk2[0], disk2[1], disk2[2]);
 }
 
 //#############################################################################
 
-double max_vietori_rips(const std::vector< std::vector<double> >& disk_system)
+double max_vietoris_rips(const std::vector< std::vector<double> >& disk_system)
 {
-    double vietori_rips_scale = std::numeric_limits<double>::lowest();
+    double vietoris_rips_scale = std::numeric_limits<double>::lowest();
     for(std::vector<double> disk1 : disk_system)
         for(std::vector<double> disk2 : disk_system)
-            vietori_rips_scale = std::max(vietori_rips_scale,
-                                          vietori_rips(disk1, disk2));
+            vietoris_rips_scale = std::max(vietoris_rips_scale,
+                                          vietoris_rips(disk1, disk2));
 
-    return vietori_rips_scale;
+    return vietoris_rips_scale;
 }
 
 std::tuple<double, std::vector<double>>
-max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system)
+max_vietoris_rips_intersection(const std::vector< std::vector<double> >& disk_system)
 {
     double number_disks = disk_system.size();
-    double vietori_rips_scale = std::numeric_limits<double>::lowest();
+    double vietoris_rips_scale = std::numeric_limits<double>::lowest();
     unsigned d1_idx = 0;
     unsigned d2_idx = 1;
     for(unsigned i = 0; i < number_disks - 1; ++i){
         for(unsigned j = i + 1; j < number_disks; ++j){
 
 
-            double vietori_rips_scale_ij = vietori_rips(disk_system[i],
+            double vietoris_rips_scale_ij = vietoris_rips(disk_system[i],
                                                         disk_system[j]);
 
-            if(vietori_rips_scale_ij > vietori_rips_scale){
-                vietori_rips_scale = vietori_rips_scale_ij;
+            if(vietoris_rips_scale_ij > vietoris_rips_scale){
+                vietoris_rips_scale = vietoris_rips_scale_ij;
                 d1_idx = i;
                 d2_idx = j;
             }
@@ -209,9 +209,9 @@ max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_sys
 
     std::vector<double> intersection = left_intersection_scaled(disk_system[d1_idx],
                                                                 disk_system[d2_idx],
-                                                                vietori_rips_scale);
+                                                                vietoris_rips_scale);
 
-    return std::make_tuple(vietori_rips_scale, intersection);
+    return std::make_tuple(vietoris_rips_scale, intersection);
 }
 
 //#############################################################################
@@ -279,7 +279,7 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 
 //#############################################################################
 
-bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
+bool write_file(double cech_scale, double vietoris_rips, std::vector<double> intersection,
                 std::string filename /*= "textfiles/Cech-Scale.txt"*/)
 {
     std::ofstream file(filename);
@@ -288,11 +288,11 @@ bool write_file(double cech_scale, double vietori_rips, std::vector<double> inte
         return false;
     }
 
-    if(approx_equal(cech_scale, vietori_rips)){
-        file << "The Cech scale agrees with the Vietori-Rips scale." << std::endl;
+    if(approx_equal(cech_scale, vietoris_rips)){
+        file << "The Cech scale agrees with the Vietoris-Rips scale." << std::endl;
     }else{
-        file << "The Cech scale is greater than the Vietori-Rips scale." << std::endl;
-        file << "Vietori-Rips scale: " << vietori_rips << std::endl;
+        file << "The Cech scale is greater than the Vietoris-Rips scale." << std::endl;
+        file << "Vietoris-Rips scale: " << vietoris_rips << std::endl;
     }
 
     file << "Cech scale: " << cech_scale << std::endl;

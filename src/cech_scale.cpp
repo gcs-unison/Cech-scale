@@ -16,11 +16,11 @@ calculate_cech_scale(std::vector< std::vector<double> > input_system)
         disk_system = input_system;
     }
 
-    double vietori_rips_system;
+    double vietoris_rips_system;
     std::vector<double> intersection;
-    //calculate max vietori rips scale of the disk system
-    std::tie(vietori_rips_system, intersection) = max_vietori_rips_intersection(disk_system);
-    double cech_scale = vietori_rips_system;
+    //calculate max vietoris rips scale of the disk system
+    std::tie(vietoris_rips_system, intersection) = max_vietoris_rips_intersection(disk_system);
+    double cech_scale = vietoris_rips_system;
 
     //verify if rho is nonnegative
     if(!rho_nonnegative(disk_system, cech_scale)){
@@ -32,20 +32,20 @@ calculate_cech_scale(std::vector< std::vector<double> > input_system)
             for(unsigned j = i + 1; j < number_disks - 1; ++j){
                 for(unsigned k = j + 1; k < number_disks; ++k){
 
-                    //calculate vietori rips of disk_i, disk_j, disk_k
+                    //calculate vietoris rips of disk_i, disk_j, disk_k
                     std::vector<std::vector<double>> disk_systemijk = {disk_system[i],
                                                                        disk_system[j],
                                                                        disk_system[k]};
-                    double vietori_rips_dijk = max_vietori_rips(disk_systemijk);
+                    double vietoris_rips_dijk = max_vietoris_rips(disk_systemijk);
 
 
-                    if(sqrt(4.0/3.0)*vietori_rips_dijk >= cech_scale){
-                        if(rho(disk_systemijk, vietori_rips_dijk) >= 0){
-                            cech_scale = vietori_rips_dijk;
+                    if(sqrt(4.0/3.0)*vietoris_rips_dijk >= cech_scale){
+                        if(rho(disk_systemijk, vietoris_rips_dijk) >= 0){
+                            cech_scale = vietoris_rips_dijk;
                         }else{
                             double cech_bisection = bisection(disk_systemijk,
-                                                              vietori_rips_dijk,
-                                                              sqrt(4.0/3.0)*vietori_rips_dijk,
+                                                              vietoris_rips_dijk,
+                                                              sqrt(4.0/3.0)*vietoris_rips_dijk,
                                                               12);
                             if(cech_bisection > cech_scale){
                                 cech_scale = cech_bisection;
@@ -70,7 +70,7 @@ calculate_cech_scale(std::vector< std::vector<double> > input_system)
         intersection = transform_intersection(disk_system, input_system, intersection);
     }
 
-    return std::make_tuple(cech_scale, vietori_rips_system, intersection);
+    return std::make_tuple(cech_scale, vietoris_rips_system, intersection);
 }
 
 //#############################################################################

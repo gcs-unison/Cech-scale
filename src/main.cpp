@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
     }
 
     double cech_scale;
-    double vietori_rips;
+    double vietoris_rips;
     std::vector<double> intersection;
-    std::tie(cech_scale, vietori_rips, intersection) = calculate_cech_scale(disk_system);
+    std::tie(cech_scale, vietoris_rips, intersection) = calculate_cech_scale(disk_system);
 
-    write_file(cech_scale, vietori_rips, intersection, output_file);
+    write_file(cech_scale, vietoris_rips, intersection, output_file);
     std::cout << "Wrote results to file: " << output_file << std::endl;
 
     return 0;

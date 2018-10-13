@@ -12,7 +12,7 @@
  * @param disk_system System of disks.
  *
  * @return A tuple of the results which are, in order: the cech scale of the,
- *  system, the vietori-rips scale of the system and the intesrection point of
+ *  system, the vietoris-rips scale of the system and the intesrection point of
  *  the system.
  */
 std::tuple<double, double, std::vector<double>>

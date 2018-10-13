@@ -107,7 +107,7 @@ std::vector<double> right_intersection_scaled(const std::vector<double>& disk1,
                                double scale);
 
 /**
- * Calculates the vietori rips distance of two disks.
+ * Calculates the vietoris rips distance of two disks.
  *
  * @param x0 x coordinate of disk 1.
  * @param y0 y coordinate of disk 1.
@@ -116,43 +116,43 @@ std::vector<double> right_intersection_scaled(const std::vector<double>& disk1,
  * @param r0 Radius of disk 1.
  * @param r1 Radius of disk 2.
  *
- * @return The vietori rips distance of the two disks
+ * @return The vietoris rips distance of the two disks
  */
-double vietori_rips(double x0, double y0, double r0,
+double vietoris_rips(double x0, double y0, double r0,
                     double x1, double y1, double r1);
 
 /**
- * Calculates the vietori rips distance of two disks.
+ * Calculates the vietoris rips distance of two disks.
  *
  * @param disk1 Vector with form (x1, y1, r1). x1,y1 are the coordinates of the
  *              center and r1 is its radius.
  * @param disk2 Vector with form (x2, y2, r2). x2,y2 are the coordinates of the
  *              center and r2 is its radius.
  *
- * @return The vietori rips distance of the two disks
+ * @return The vietoris rips distance of the two disks
  */
-double vietori_rips(const std::vector<double>& disk1,
+double vietoris_rips(const std::vector<double>& disk1,
                     const std::vector<double>& disk2);
 
 /**
- * Calculates the maximum vietori rips distance of a system of disks.
+ * Calculates the maximum vietoris rips distance of a system of disks.
  *
  * @param disk_system System of disks.
  *
- * @return The maximum vietori rips distance between two disks in the system.
+ * @return The maximum vietoris rips distance between two disks in the system.
  */
-double max_vietori_rips(const std::vector< std::vector<double> >& disk_system);
+double max_vietoris_rips(const std::vector< std::vector<double> >& disk_system);
 
 /**
- * Calculates the maximum vietori rips distance of a system of disks.
+ * Calculates the maximum vietoris rips distance of a system of disks.
  *
  * @param disk_system System of disks.
  *
- * @return The maximum vietori rips distance between two disks in the system
+ * @return The maximum vietoris rips distance between two disks in the system
  *          and the intersection of the disks with this distance.
  */
 std::tuple<double, std::vector<double>>
-max_vietori_rips_intersection(const std::vector< std::vector<double> >& disk_system);
+max_vietoris_rips_intersection(const std::vector< std::vector<double> >& disk_system);
 
 /**
  * rho function. Evaluates the map rho_m(lambda)
@@ -249,12 +249,12 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
 /**
  * Reads the file and stores the contents in the disk system.
  * Writes to a file the results of the program.
- * Writes whether the cech scale is equal to the vietori rips scale and writes
+ * Writes whether the cech scale is equal to the vietoris rips scale and writes
  * the cech scale of the disk system.
  * Also outputs the intersection point.
  *
  * @param cech_scale The cech scale calculated by the program.
- * @param vietori_rips The vietori rips calculated by the program.
+ * @param vietoris_rips The vietori rips calculated by the program.
  * @param intersection Vector with the coordinates of the intersecion
  *                     calculated by the program.
  * @param filename The file's name to output the result to.
@@ -262,7 +262,7 @@ bool read_file(std::vector< std::vector<double> >& disk_system,
  *
  * @return True if the file could be opened and everything went all right, false otherwise
  */
-bool write_file(double cech_scale, double vietori_rips, std::vector<double> intersection,
+bool write_file(double cech_scale, double vietoris_rips, std::vector<double> intersection,
                 std::string filename = "textfiles/Cech-Scale.txt");
 
 //#############################################################################
